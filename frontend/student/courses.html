@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="../css/student.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      /* Main Content Styles */
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        transition: margin-left 0.3s;
+      }
+      
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      
+      .user-wrapper {
+        display: flex;
+        align-items: center;
+      }
+      
+      .user-wrapper img {
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+      
+      /* Courses Container */
+      .courses-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      
+      .course-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+      
+      .course-card:hover {
+        transform: translateY(-5px);
+      }
+      
+      .course-header {
+        padding: 15px;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        color: white;
+      }
+      
+      .course-body {
+        padding: 15px;
+      }
+      
+      .course-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        font-size: 0.9em;
+        color: #666;
+      }
+      
+      .stat-item {
+        display: flex;
+        align-items: center;
+      }
+      
+      .stat-item i {
+        margin-right: 5px;
+      }
+      
+      .course-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+      }
+      
+      .btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      
+      .btn-view {
+        background: #4CAF50;
+        color: white;
+        width: 100%;
+        text-align: center;
+      }
+      
+      /* Modal styles for course details */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        overflow-y: auto;
+      }
+      
+      .modal-content {
+        background: white;
+        margin: 5% auto;
+        padding: 30px;
+        width: 70%;
+        max-width: 800px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: relative;
+      }
+      
+      .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #aaa;
+      }
+      
+      .close-modal:hover {
+        color: #333;
+      }
+      
+      .course-detail-header {
+        padding: 20px;
+        border-radius: 8px;
+        color: white;
+        margin-bottom: 20px;
+      }
+      
+      .course-detail-body {
+        margin-top: 20px;
+      }
+      
+      .course-sections {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 30px;
+      }
+      
+      .course-section {
+        flex: 1;
+        min-width: 250px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+      }
+      
+      .course-section h3 {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      
+      .module-list {
+        list-style-type: none;
+        padding-left: 0;
+      }
+      
+      .module-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .module-list li:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-user-graduate"></i>
+        <span>Student Panel</span>
+      </div>
+      <ul class="nav-list">
+        <li>
+          <a href="../dashboard/student-dashboard.html">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="courses.html">
+            <i class="fas fa-book"></i>
+            <span>My Courses</span>
+          </a>
+        </li>
+        <li>
+          <a href="assignment.html">
+            <i class="fas fa-tasks"></i>
+            <span>Assignments</span>
+          </a>
+        </li>
+      </ul>
+      <div class="logout">
+        <a href="../dashboard/index.html">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <header>
+        <h1>
+          <i class="fas fa-book"></i>
+          My Courses
+        </h1>
+        <div class="user-wrapper">
+          <img src="images/student-avatar.jpg" width="40px" height="40px" alt="">
+          <div>
+            <h4>John Doe</h4>
+            <small>Computer Science - 3rd Year</small>
+          </div>
+        </div>
+      </header>
+      
+      <main>
+        <div class="courses-container">
+          <!-- AI/ML Course -->
+          <div class="course-card">
+            <div class="course-header">
+              <h3>Artificial Intelligence & Machine Learning</h3>
+              <small>CS501 - Semester 5</small>
+            </div>
+            <div class="course-body">
+              <p>Fundamentals of AI and ML algorithms with practical implementations.</p>
+              <div class="course-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i> 45 Students
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-tasks"></i> 8 Modules
+                </div>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-view" onclick="showCourseDetails('ai-ml')">View Course</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Web Development Course -->
+          <div class="course-card">
+            <div class="course-header" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+              <h3>Web Development</h3>
+              <small>CS502 - Semester 5</small>
+            </div>
+            <div class="course-body">
+              <p>Full-stack web development with HTML, CSS, JavaScript, and frameworks.</p>
+              <div class="course-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i> 52 Students
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-tasks"></i> 10 Modules
+                </div>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-view" onclick="showCourseDetails('web-dev')">View Course</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Data Structures & Algorithms -->
+          <div class="course-card">
+            <div class="course-header" style="background: linear-gradient(135deg, #5ee7df, #b490ca);">
+              <h3>Data Structures & Algorithms</h3>
+              <small>CS503 - Semester 3</small>
+            </div>
+            <div class="course-body">
+              <p>Core concepts of data structures and algorithm design and analysis.</p>
+              <div class="course-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i> 60 Students
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-tasks"></i> 12 Modules
+                </div>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-view" onclick="showCourseDetails('dsa')">View Course</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Internet of Things -->
+          <div class="course-card">
+            <div class="course-header" style="background: linear-gradient(135deg, #d299c2, #fef9d7);">
+              <h3>Internet of Things</h3>
+              <small>CS504 - Semester 6</small>
+            </div>
+            <div class="course-body">
+              <p>Design and implementation of IoT systems and applications.</p>
+              <div class="course-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i> 38 Students
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-tasks"></i> 6 Modules
+                </div>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-view" onclick="showCourseDetails('iot')">View Course</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Database Management Systems -->
+          <div class="course-card">
+            <div class="course-header" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
+              <h3>Database Management Systems</h3>
+              <small>CS505 - Semester 3</small>
+            </div>
+            <div class="course-body">
+              <p>Design and implementation of relational and NoSQL database systems.</p>
+              <div class="course-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i> 55 Students
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-tasks"></i> 9 Modules
+                </div>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-view" onclick="showCourseDetails('dbms')">View Course</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Course Detail Modals -->
+    <div id="ai-ml-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('ai-ml-modal')">&times;</span>
+        <div class="course-detail-header" style="background: linear-gradient(135deg, #6e8efb, #a777e3);">
+          <h2>Artificial Intelligence & Machine Learning</h2>
+          <p><strong>CS501</strong> | Semester 5 | 45 Students | Dr. Smith</p>
+        </div>
+        <div class="course-detail-body">
+          <h3>Course Description</h3>
+          <p>This course provides a comprehensive introduction to Artificial Intelligence and Machine Learning. Students will learn fundamental algorithms, neural networks, and practical applications of AI. The course covers supervised and unsupervised learning, deep learning architectures, and ethical considerations in AI development.</p>
+          
+          <div class="course-sections">
+            <div class="course-section">
+              <h3>Course Modules</h3>
+              <ul class="module-list">
+                <li>1. Introduction to AI & ML</li>
+                <li>2. Supervised Learning Algorithms</li>
+                <li>3. Unsupervised Learning Techniques</li>
+                <li>4. Neural Networks Fundamentals</li>
+                <li>5. Deep Learning Architectures</li>
+                <li>6. Natural Language Processing</li>
+                <li>7. Computer Vision</li>
+                <li>8. AI Ethics and Future Trends</li>
+              </ul>
+            </div>
+            
+            <div class="course-section">
+              <h3>Learning Outcomes</h3>
+              <ul class="module-list">
+                <li>Understand core AI/ML concepts</li>
+                <li>Implement ML algorithms in Python</li>
+                <li>Build and train neural networks</li>
+                <li>Evaluate model performance</li>
+                <li>Apply AI to real-world problems</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="web-dev-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('web-dev-modal')">&times;</span>
+        <div class="course-detail-header" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+          <h2>Web Development</h2>
+          <p><strong>CS502</strong> | Semester 5 | 52 Students | Prof. Johnson</p>
+        </div>
+        <div class="course-detail-body">
+          <h3>Course Description</h3>
+          <p>This course covers full-stack web development from fundamentals to advanced concepts. Students will learn HTML5, CSS3, JavaScript (ES6+), frontend frameworks (React), backend development (Node.js, Express), and database integration (MongoDB). The course emphasizes responsive design, RESTful APIs, and modern development workflows.</p>
+          
+          <div class="course-sections">
+            <div class="course-section">
+              <h3>Course Modules</h3>
+              <ul class="module-list">
+                <li>1. Web Fundamentals (HTML/CSS)</li>
+                <li>2. JavaScript Programming</li>
+                <li>3. Responsive Design</li>
+                <li>4. Frontend Frameworks (React)</li>
+                <li>5. Backend Development (Node.js)</li>
+                <li>6. Database Integration</li>
+                <li>7. RESTful APIs</li>
+                <li>8. Authentication & Security</li>
+                <li>9. Deployment Strategies</li>
+                <li>10. Project Development</li>
+              </ul>
+            </div>
+            
+            <div class="course-section">
+              <h3>Learning Outcomes</h3>
+              <ul class="module-list">
+                <li>Build responsive web applications</li>
+                <li>Implement frontend interfaces</li>
+                <li>Develop server-side logic</li>
+                <li>Design database schemas</li>
+                <li>Deploy full-stack applications</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dsa-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('dsa-modal')">&times;</span>
+        <div class="course-detail-header" style="background: linear-gradient(135deg, #5ee7df, #b490ca);">
+          <h2>Data Structures & Algorithms</h2>
+          <p><strong>CS503</strong> | Semester 3 | 60 Students | Dr. Williams</p>
+        </div>
+        <div class="course-detail-body">
+          <h3>Course Description</h3>
+          <p>This course covers fundamental data structures and algorithms used in computer science. Topics include arrays, linked lists, stacks, queues, trees, graphs, sorting algorithms, searching algorithms, and complexity analysis. Students will implement these concepts in programming assignments and analyze their performance.</p>
+          
+          <div class="course-sections">
+            <div class="course-section">
+              <h3>Course Modules</h3>
+              <ul class="module-list">
+                <li>1. Introduction to Algorithms</li>
+                <li>2. Arrays and Linked Lists</li>
+                <li>3. Stacks and Queues</li>
+                <li>4. Trees and Binary Search Trees</li>
+                <li>5. Balanced Trees (AVL, Red-Black)</li>
+                <li>6. Heaps and Priority Queues</li>
+                <li>7. Hashing and Hash Tables</li>
+                <li>8. Graph Representations</li>
+                <li>9. Graph Algorithms</li>
+                <li>10. Sorting Algorithms</li>
+                <li>11. Searching Algorithms</li>
+                <li>12. Complexity Theory</li>
+              </ul>
+            </div>
+            
+            <div class="course-section">
+              <h3>Learning Outcomes</h3>
+              <ul class="module-list">
+                <li>Understand fundamental data structures</li>
+                <li>Implement common algorithms</li>
+                <li>Analyze algorithm complexity</li>
+                <li>Solve problems using appropriate data structures</li>
+                <li>Compare algorithm performance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="iot-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('iot-modal')">&times;</span>
+        <div class="course-detail-header" style="background: linear-gradient(135deg, #d299c2, #fef9d7);">
+          <h2>Internet of Things</h2>
+          <p><strong>CS504</strong> | Semester 6 | 38 Students | Prof. Davis</p>
+        </div>
+        <div class="course-detail-body">
+          <h3>Course Description</h3>
+          <p>This course introduces the concepts and technologies behind the Internet of Things (IoT). Students will learn about sensors, actuators, microcontrollers, communication protocols, cloud integration, and data analysis for IoT systems. The course includes hands-on projects with popular IoT platforms.</p>
+          
+          <div class="course-sections">
+            <div class="course-section">
+              <h3>Course Modules</h3>
+              <ul class="module-list">
+                <li>1. Introduction to IoT</li>
+                <li>2. Sensors and Actuators</li>
+                <li>3. Microcontrollers for IoT</li>
+                <li>4. IoT Communication Protocols</li>
+                <li>5. IoT Security</li>
+                <li>6. Cloud Integration</li>
+                <li>7. IoT Data Analysis</li>
+                <li>8. IoT Applications</li>
+              </ul>
+            </div>
+            
+            <div class="course-section">
+              <h3>Learning Outcomes</h3>
+              <ul class="module-list">
+                <li>Design IoT systems</li>
+                <li>Work with sensors and microcontrollers</li>
+                <li>Implement IoT communication protocols</li>
+                <li>Integrate IoT with cloud services</li>
+                <li>Analyze IoT data</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dbms-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('dbms-modal')">&times;</span>
+        <div class="course-detail-header" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
+          <h2>Database Management Systems</h2>
+          <p><strong>CS505</strong> | Semester 3 | 55 Students | Dr. Brown</p>
+        </div>
+        <div class="course-detail-body">
+          <h3>Course Description</h3>
+          <p>This course covers the fundamental concepts of database systems. Topics include relational database design, SQL, normalization, transactions, concurrency control, and database security. Students will work with both relational and NoSQL databases, implementing practical database applications.</p>
+          
+          <div class="course-sections">
+            <div class="course-section">
+              <h3>Course Modules</h3>
+              <ul class="module-list">
+                <li>1. Database Fundamentals</li>
+                <li>2. Relational Model</li>
+                <li>3. SQL Programming</li>
+                <li>4. Database Design</li>
+                <li>5. Normalization</li>
+                <li>6. Transactions</li>
+                <li>7. Concurrency Control</li>
+                <li>8. Database Security</li>
+                <li>9. NoSQL Databases</li>
+              </ul>
+            </div>
+            
+            <div class="course-section">
+              <h3>Learning Outcomes</h3>
+              <ul class="module-list">
+                <li>Design relational databases</li>
+                <li>Write complex SQL queries</li>
+                <li>Normalize database schemas</li>
+                <li>Understand transaction management</li>
+                <li>Work with NoSQL databases</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to show course details
+      function showCourseDetails(courseId) {
+        document.getElementById(courseId + '-modal').style.display = 'block';
+      }
+      
+      // Function to close modal
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+      }
+      
+      // Close modal when clicking outside content
+      window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+          event.target.style.display = 'none';
+        }
+      }
+    </script>
+
+    <script src="js/student.js"></script>
+  </body>
+</html>

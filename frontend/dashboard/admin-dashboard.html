@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      
+      .modal-content {
+        position: relative;
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 15px;
+        border-radius: 8px;
+        width: 400px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        animation: modalOpen 0.3s ease;
+      }
+      
+      @keyframes modalOpen {
+        from {opacity: 0; transform: translateY(-20px);}
+        to {opacity: 1; transform: translateY(0);}
+      }
+      
+      .close-modal {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      
+      .form-group {
+        margin-bottom: 10px;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 3px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      
+      .form-group input, .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      
+      .form-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 15px;
+      }
+      
+      .btn-primary {
+        background-color: #3554d1;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      .btn-success {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .action-buttons {
+        display: flex;
+        gap: 3px;
+      }
+      
+      .btn-sm {
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+      
+      .btn-edit {
+        background-color: #ffc107;
+        color: #212529;
+      }
+      
+      .btn-delete {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      /* Compact form styles */
+      #modal-title {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      
+      /* Two-column form layout */
+      .form-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 0;
+      }
+      
+      .form-row .form-group {
+        flex: 1;
+        min-width: 0;
+      }
+    </style>
+  </head>
+
+  <body data-required-role="admin">
+    <div class="sidebar">
+      <div class="logo">
+        <i class="fas fa-user-shield"></i>
+        <span>Admin Panel</span>
+      </div>
+      <ul class="nav-list">
+        <li class="active">
+          <a href="#">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+    
+      </ul>
+    <!-- To this -->
+<div class="logout">
+  <a href="/frontend/dashboard/index.html?logout=true" id="logoutLink">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Logout</span>
+  </a>
+</div>
+    </div>
+
+    <div class="main-content">
+      <header>
+        <h1>
+          <i class="fas fa-tachometer-alt"></i>
+          Dashboard
+        </h1>
+        <div class="user-wrapper">
+          <img
+            src="data:image/jpeg;base64,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"
+            width="40px"
+            height="40px"
+            alt="Admin Avatar" />
+          <div>
+            <h4>Admin User</h4>
+            <small>Super Admin</small>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <div class="cards">
+          <div class="card-single" data-type="student">
+            <div>
+              <h1 id="student-count">Students</h1>
+            </div>
+            <div><i class="fas fa-users"></i></div>
+          </div>
+          <div class="card-single" data-type="faculty">
+            <div>
+              <h1 id="faculty-count">Faculty</h1>
+            </div>
+            <div><i class="fas fa-chalkboard-teacher"></i></div>
+          </div>
+          <div class="card-single" data-type="hod">
+            <div>
+              <h1 id="hod-count">HODs</h1>
+            </div>
+            <div><i class="fas fa-user-tie"></i></div>
+          </div>
+        </div>
+
+          <div class="recent-grid">
+            <div class="projects">
+              <div class="card">
+                <div class="card-header">
+                  <h3 id="recent-title" style="text-align: center; width: 100%;">Recent Students</h3>
+                </div>
+
+                <div class="card-body">
+                  <div class="top-actions" style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                    <button id="toggle-edit-mode" style="
+                      background-color: #3554d1;
+                      color: white;
+                      border: none;
+                      padding: 6px 12px;
+                      font-size: 14px;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 5px;
+                    ">
+                      Edit All <i class="fas fa-edit"></i>
+                    </button>
+
+                  </div>
+
+                  <div class="table-responsive">
+                    <table width="100%">
+                      <thead>
+                        <tr>
+                          <td></td>
+                          <td>ID</td>
+                          <td>Name</td>
+                          <td>Department</td>
+                          <td>Status</td>
+                          <td>Actions</td>
+                        </tr>
+                      </thead>
+                      <tbody id="recent-body">
+                        <!-- Filled by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="bulk-actions" style="display: none; margin-top: 10px">
+                    <button
+                      id="delete-selected"
+                      style="
+                        background-color: #dc3545;
+                        color: white;
+                        padding: 6px 12px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 14px;
+                      ">
+                      Delete Selected
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- Permissions Section -->
+        <div class="permissions-section">
+          <div class="card">
+            <div class="card-header">
+              <h3>Role Permissions</h3>
+            </div>
+            <div class="card-body">
+              <div class="permission-tabs">
+                <button
+                  class="tab-btn active"
+                  data-target="student-permissions">
+                  Student
+                </button>
+                <button class="tab-btn" data-target="faculty-permissions">
+                  Faculty
+                </button>
+                <button class="tab-btn" data-target="hod-permissions">
+                  HOD
+                </button>
+              </div>
+
+              <div class="permission-content active" id="student-permissions">
+                <h4>Student Visibility Controls</h4>
+                <div class="toggle-group">
+                  <div class="toggle-item">
+                    <span>Show Assignments</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Show Marks</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Get-Attandence</span>
+                    <label class="switch">
+                      <input type="checkbox" />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="permission-content" id="faculty-permissions">
+                <h4>Faculty Operation Controls</h4>
+                <div class="toggle-group">
+                  <div class="toggle-item">
+                    <span>Get-Assignment</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>update-student</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Delete-Student</span>
+                    <label class="switch">
+                      <input type="checkbox" />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Get-Attandence</span>
+                    <label class="switch">
+                      <input type="checkbox" />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="permission-content" id="hod-permissions">
+                <h4>HOD Operation Controls</h4>
+                <div class="toggle-group">
+                  <div class="toggle-item">
+                    <span>Get-Assignment</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>update-student</span>
+                    <label class="switch">
+                      <input type="checkbox" checked />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Delete-Student</span>
+                    <label class="switch">
+                      <input type="checkbox" />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-item">
+                    <span>Get-Attandence</span>
+                    <label class="switch">
+                      <input type="checkbox" />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Compact Create/Edit User Modal -->
+    <div id="user-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modal-title">Add New User</h2>
+        <form id="user-form">
+          <input type="hidden" id="user-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="user-role">Role</label>
+              <select id="user-role" required>
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="hod">HOD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="user-status">Status</label>
+              <select id="user-status" required>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="user-name">Full Name</label>
+            <input type="text" id="user-name" placeholder="Enter full name" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="user-email">Email</label>
+              <input type="email" id="user-email" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+              <label for="user-department">Department</label>
+              <select id="user-department" required>
+                <option value="">Select Department</option>
+                <option value="Computer Science">CS</option>
+                <option value="Electrical Engineering">EE</option>
+                <option value="Mechanical Engineering">ME</option>
+                <option value="Civil Engineering">CE</option>
+                <option value="Information Technology">IT</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="user-password">Password</label>
+            <input type="password" id="user-password" placeholder="Enter password" required>
+          </div>
+          <div class="form-buttons">
+            <button type="button" id="cancel-form" class="btn-secondary">Cancel</button>
+            <button type="submit" id="save-user" class="btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        // Global variables
+        let currentType = "student";
+        let editMode = false;
+        let users = [];
+        
+        // DOM elements
+        const recentTitle = document.getElementById("recent-title");
+        const recentBody = document.getElementById("recent-body");
+        const modal = document.getElementById("user-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const userForm = document.getElementById("user-form");
+        const userId = document.getElementById("user-id");
+        const userRoleSelect = document.getElementById("user-role");
+        const userName = document.getElementById("user-name");
+        const userEmail = document.getElementById("user-email");
+        const userPassword = document.getElementById("user-password");
+        const userDepartment = document.getElementById("user-department");
+        const userStatus = document.getElementById("user-status");
+        const toggleEditModeBtn = document.getElementById("toggle-edit-mode");
+        const bulkActions = document.getElementById("bulk-actions");
+        const deleteSelectedBtn = document.getElementById("delete-selected");
+        const logoutLink = document.getElementById("logoutLink");
+    
+        // Check authentication and initialize
+        const token = localStorage.getItem('token') || localStorage.getItem('userToken');
+        const role = localStorage.getItem('role') || localStorage.getItem('userRole');
+        
+        if (!token) {
+            window.location.href = '/frontend/dashboard/index.html';
+            return;
+        }
+    
+        // Initialize the dashboard
+        initializeDashboard();
+    
+        function initializeDashboard() {
+            setupEventListeners();
+            displayRecentData(currentType);
+            loadVisibilitySettings();
+            
+            // Show content after loading
+            setTimeout(() => {
+                document.querySelector('.main-content').style.opacity = '1';
+            }, 300);
+        }
+    
+        function setupEventListeners() {
+            // Navigation links
+            document.querySelectorAll('a[href^="/frontend/dashboard/"]').forEach(link => {
+                link.addEventListener('click', handleNavigation);
+            });
+    
+            // Card role filters
+            document.querySelectorAll(".card-single").forEach(card => {
+                card.addEventListener("click", () => {
+                    const type = card.getAttribute("data-type");
+                    displayRecentData(type);
+                });
+            });
+    
+            // Modal controls
+            document.querySelector(".close-modal").addEventListener("click", closeModal);
+            document.getElementById("cancel-form").addEventListener("click", closeModal);
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) closeModal();
+            });
+    
+            // Role change in form
+            userRoleSelect.addEventListener("change", (e) => {
+                updateFormFields(e.target.value);
+            });
+    
+            // Form submission
+            userForm.addEventListener("submit", handleFormSubmit);
+    
+            // Edit mode toggle
+            if (toggleEditModeBtn) {
+                toggleEditModeBtn.addEventListener("click", toggleEditMode);
+            }
+    
+            // Bulk delete
+            if (deleteSelectedBtn) {
+                deleteSelectedBtn.addEventListener("click", handleBulkDelete);
+            }
+    
+            // Logout
+            if (logoutLink) {
+                logoutLink.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+    
+            // Back/forward navigation
+            window.addEventListener('popstate', handlePopState);
+    
+            // Permission tabs
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const permissionContents = document.querySelectorAll('.permission-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(btn => btn.classList.remove('active'));
+                    permissionContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+    
+            // Permission switches
+            const switches = document.querySelectorAll('.switch input');
+            switches.forEach(switchInput => {
+                switchInput.addEventListener('change', function() {
+                    const role = this.closest('.permission-content').id.replace('-permissions', '');
+                    const feature = this.parentElement.previousElementSibling.textContent.trim();
+                    const status = this.checked;
+                    
+                    updateVisibilitySetting(role, feature, status);
+                });
+            });
+        }
+    
+        // Navigation handling
+        function handleNavigation(e) {
+            e.preventDefault();
+            const targetUrl = this.getAttribute('href');
+            
+            if (targetUrl.includes('logout=true')) {
+                logout();
+                return;
+            }
+    
+            fetch(targetUrl)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const newDoc = parser.parseFromString(html, 'text/html');
+                    
+                    // Replace main content
+                    const newMain = newDoc.querySelector('.main-content');
+                    if (newMain) {
+                        document.querySelector('.main-content').replaceWith(newMain);
+                    }
+                    
+                    // Update the displayed URL
+                    const displayUrl = `${window.location.origin}/frontend/dashboard/index.html`;
+                    window.history.pushState({page: targetUrl}, '', displayUrl);
+                    
+                    // Reinitialize scripts
+                    initializeDashboard();
+                })
+                .catch(error => {
+                    console.error('Navigation error:', error);
+                    window.location.href = targetUrl;
+                });
+        }
+    
+        // Handle back/forward navigation
+        function handlePopState(event) {
+            if (event.state && event.state.page) {
+                fetch(event.state.page)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const newDoc = parser.parseFromString(html, 'text/html');
+                        const newMain = newDoc.querySelector('.main-content');
+                        if (newMain) {
+                            document.querySelector('.main-content').replaceWith(newMain);
+                        }
+                        initializeDashboard();
+                    });
+            }
+        }
+    
+        // Fetch data from API
+        async function fetchData(type) {
+            try {
+                if (!token) {
+                    alert("Please login to continue.");
+                    window.location.href = "/frontend/dashboard/index.html";
+                    return [];
+                }
+    
+                const res = await fetch(`http://localhost:5000/api/users/role/${type}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+    
+                if (res.status === 401) {
+                    alert("Session expired. Please login again.");
+                    window.location.href = "/frontend/dashboard/index.html";
+                    return [];
+                }
+    
+                if (!res.ok) throw new Error("Failed to fetch users");
+    
+                const result = await res.json();
+                return result.data || [];
+            } catch (err) {
+                console.error(err);
+                recentBody.innerHTML = `<tr><td colspan="6">Error loading data</td></tr>`;
+                return [];
+            }
+        }
+    
+        // Display recent data in table
+        async function displayRecentData(type) {
+            currentType = type;
+            recentTitle.textContent = `${capitalizeFirstLetter(type)}s`;
+            recentBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+    
+            try {
+                users = await fetchData(type);
+                if (!users.length) {
+                    return recentBody.innerHTML = "<tr><td colspan='6'>No data found</td></tr>";
+                }
+    
+                recentBody.innerHTML = "";
+                users.forEach((user, i) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = createRow(user, i);
+                    recentBody.appendChild(row);
+                });
+    
+                // Add edit/delete listeners
+                document.querySelectorAll(".btn-edit").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const id = btn.dataset.id;
+                        const user = users.find(u => u._id === id);
+                        openModal(true, user);
+                    });
+                });
+    
+                document.querySelectorAll(".btn-delete").forEach(btn => {
+                    btn.addEventListener("click", async () => {
+                        const id = btn.dataset.id;
+                        if (confirm("Delete this user?")) await deleteUser(id);
+                    });
+                });
+    
+                setupSelectAllCheckbox();
+            } catch (err) {
+                recentBody.innerHTML = "<tr><td colspan='6'>Error loading data</td></tr>";
+            }
+        }
+    
+        // Create table row HTML
+        function createRow(user, index) {
+            return `
+                <td>${editMode ? `<input type="checkbox" class="user-checkbox" data-id="${user._id}" />` : ""}</td>
+                <td>${index + 1}</td>
+                <td>${user.name || user.fullName || "N/A"}</td>
+                <td>${user.dept || user.department || "N/A"}</td>
+                <td><span class="status ${user.status || "active"}">${user.status || "active"}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-primary btn-sm btn-edit" data-id="${user._id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-primary btn-sm btn-delete" data-id="${user._id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+        }
+    
+        // Open modal for add/edit
+        function openModal(isEdit = false, userData = null) {
+            userForm.reset();
+    
+            if (isEdit && userData) {
+                modalTitle.textContent = "Edit User";
+                userId.value = userData._id;
+                userRoleSelect.value = userData.role || currentType;
+                userName.value = userData.name || userData.fullName || "";
+                userEmail.value = userData.email || "";
+                userDepartment.value = userData.dept || userData.department || "";
+                userStatus.value = userData.status || "active";
+    
+                const currentUserRole = localStorage.getItem("userRole") || localStorage.getItem("role");
+                userRoleSelect.disabled = !['Admin', 'admin'].includes(currentUserRole);
+                userPassword.placeholder = "Enter new password (leave empty to keep current)";
+                userPassword.required = false;
+            } else {
+                modalTitle.textContent = "Add New User";
+                userId.value = "";
+                userRoleSelect.value = currentType;
+                userRoleSelect.disabled = false;
+                userPassword.placeholder = "Enter password";
+                userPassword.required = true;
+            }
+    
+            updateFormFields(userRoleSelect.value);
+            modal.style.display = "block";
+        }
+    
+        // Close modal
+        function closeModal() {
+            modal.style.display = "none";
+            userForm.reset();
+        }
+    
+        // Update form fields based on role
+        function updateFormFields(role) {
+            userName.placeholder = role === 'student' ? "Enter student name" : "Enter full name";
+            userDepartment.placeholder = role === 'student' ? "Enter student department" : "Enter department";
+        }
+    
+        // Handle form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+    
+            const formData = {
+                role: userRoleSelect.value,
+                email: userEmail.value,
+                status: userStatus.value,
+            };
+    
+            if (userRoleSelect.value === 'student') {
+                formData.name = userName.value;
+                formData.dept = userDepartment.value;
+            } else {
+                formData.fullName = userName.value;
+                formData.department = userDepartment.value;
+                if (userRoleSelect.value === 'hod') formData.isHod = true;
+            }
+    
+            if (userPassword.value) formData.password = userPassword.value;
+    
+            const isEditing = userId.value !== "";
+            const endpoint = isEditing
+                ? `http://localhost:5000/api/users/${userId.value}`
+                : "http://localhost:5000/api/auth/register";
+            const method = isEditing ? "PUT" : "POST";
+    
+            try {
+                if (!token) {
+                    alert("Please login to continue.");
+                    return window.location.href = "/frontend/dashboard/index.html";
+                }
+    
+                const response = await fetch(endpoint, {
+                    method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(formData),
+                });
+    
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Operation failed");
+    
+                alert(`User ${isEditing ? "updated" : "created"} successfully`);
+                closeModal();
+                displayRecentData(currentType);
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+                console.error(err);
+            }
+        }
+    
+        // Delete single user
+        async function deleteUser(id) {
+            try {
+                if (!token) {
+                    alert("Please login.");
+                    return window.location.href = "/frontend/dashboard/index.html";
+                }
+    
+                const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+    
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Delete failed");
+    
+                alert(data.message || "User deleted");
+                displayRecentData(currentType);
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+                console.error(err);
+            }
+        }
+    
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            displayRecentData(currentType);
+            bulkActions.style.display = editMode ? "block" : "none";
+        }
+    
+        // Handle bulk delete
+        async function handleBulkDelete() {
+            const selectedIds = Array.from(document.querySelectorAll(".user-checkbox:checked"))
+                .map(cb => cb.dataset.id);
+    
+            if (!selectedIds.length) return alert("No users selected");
+            if (!confirm("Delete selected users?")) return;
+    
+            try {
+                if (!token) {
+                    alert("Please login to continue.");
+                    return window.location.href = "/frontend/dashboard/index.html";
+                }
+    
+                const res = await fetch("http://localhost:5000/api/users/bulk-delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ ids: selectedIds }),
+                });
+    
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Bulk delete failed");
+    
+                alert(data.message || "Users deleted");
+                displayRecentData(currentType);
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+                console.error(err);
+            }
+        }
+    
+        // Setup select all checkbox
+        function setupSelectAllCheckbox() {
+            const selectAll = document.getElementById("select-all");
+            if (!selectAll) return;
+    
+            selectAll.checked = false;
+            selectAll.addEventListener("change", (e) => {
+                document.querySelectorAll(".user-checkbox").forEach(cb => cb.checked = e.target.checked);
+            });
+        }
+    
+        // Load visibility settings from backend
+        async function loadVisibilitySettings() {
+            try {
+                if (!token) {
+                    console.log("No token available to load visibility settings");
+                    return;
+                }
+    
+                const response = await fetch('/api/visibility-settings', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load settings');
+                }
+                
+                const settings = await response.json();
+                
+                // Update UI with loaded settings
+                settings.forEach(setting => {
+                    const roleContent = document.getElementById(`${setting.role.toLowerCase()}-permissions`);
+                    if (roleContent) {
+                        const toggleItems = roleContent.querySelectorAll('.toggle-item');
+                        
+                        toggleItems.forEach(item => {
+                            const featureName = item.querySelector('span').textContent.trim();
+                            const checkbox = item.querySelector('input[type="checkbox"]');
+                            
+                            // Map feature names to settings
+                            if (featureName === 'Show Assignments') {
+                                checkbox.checked = setting.showAssignments;
+                            } else if (featureName === 'Show Marks') {
+                                checkbox.checked = setting.showMarks;
+                            } else if (featureName === 'Show Attendance') {
+                                checkbox.checked = setting.showAttendance;
+                            }
+                            // Add more mappings as needed
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                alert('Failed to load visibility settings');
+            }
+        }
+    
+        // Update visibility setting
+        async function updateVisibilitySetting(role, feature, status) {
+            try {
+                if (!token) {
+                    alert("Please login to continue.");
+                    return window.location.href = "/frontend/dashboard/index.html";
+                }
+    
+                // First get current settings for the role
+                const getResponse = await fetch(`/api/visibility-settings/${role}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!getResponse.ok) {
+                    throw new Error('Failed to get current settings');
+                }
+                
+                const currentSettings = await getResponse.json();
+                
+                // Determine which setting to update based on feature name
+                let settingToUpdate = {};
+                
+                switch(feature) {
+                    case 'Show Assignments':
+                        settingToUpdate = { showAssignments: status };
+                        break;
+                    case 'Show Marks':
+                        settingToUpdate = { showMarks: status };
+                        break;
+                    case 'Show Attendance':
+                        settingToUpdate = { showAttendance: status };
+                        break;
+                    // Add more cases as needed
+                    default:
+                        console.log(`${feature} for ${role} ${status ? 'enabled' : 'disabled'}`);
+                        return;
+                }
+                
+                // Send update to backend
+                const updateResponse = await fetch(`/api/visibility-settings/${role}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        ...currentSettings,
+                        ...settingToUpdate
+                    })
+                });
+                
+                if (!updateResponse.ok) {
+                    throw new Error('Failed to update settings');
+                }
+                
+                console.log(`${feature} for ${role} ${status ? 'enabled' : 'disabled'}`);
+            } catch (error) {
+                console.error('Error updating setting:', error);
+                // Revert the UI change
+                const toggleItems = document.querySelectorAll('.toggle-item');
+                toggleItems.forEach(item => {
+                    if (item.querySelector('span').textContent.trim() === feature) {
+                        item.querySelector('input[type="checkbox"]').checked = !status;
+                    }
+                });
+                alert('Failed to update visibility setting');
+            }
+        }
+    
+        // Capitalize first letter
+        function capitalizeFirstLetter(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    
+        function logout() {
+            // Clear all authentication data
+            localStorage.removeItem('token');
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userData');
+            sessionStorage.clear();
+    
+            // Clear cookies
+            document.cookie.split(";").forEach(function(c) {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, 
+                    "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+    
+            // Redirect to login page
+            window.location.href = '/frontend/dashboard/index.html?logout=true';
+        }
+    });
+    </script>
+  </body>
+</html>
+ 

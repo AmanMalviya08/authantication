@@ -1,0 +1,993 @@
+<!-- @format -->
+
+
+<link rel="stylesheet" href="faculty.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body>
+  <div class="main-content">
+    <header>
+      <h1>
+        <i class="fas fa-tachometer-alt"></i>
+        Dashboard
+      </h1>
+      <div class="user-wrapper">
+        <div>
+          <h4>Faculty User</h4>
+          <small>Super Admin</small>
+        </div>
+      </div>
+      <div class="logout">
+        <a href="index.html">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="cards">
+        <div class="card-single" data-type="student">
+          <div>
+            <h1 id="student-count">Students</h1>
+          </div>
+          <div><i class="fas fa-users"></i></div>
+        </div>
+        <div class="card-single" data-type="faculty">
+          <div>
+            <h1 id="faculty-count">Faculty</h1>
+          </div>
+          <div><i class="fas fa-chalkboard-teacher"></i></div>
+        </div>
+        <!-- <div class="card-single" data-type="Attendance"> -->
+        <!-- Mark Attendance Card -->
+        <div class="card shadow" id="openAttendanceModal" style="cursor: pointer">
+          <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Mark Attendance</h3>
+          </div>
+          <div class="card-body text-center">
+            <p>Click here to mark attendance</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-single" data-type="faculty">
+        <div>
+          <h1 id="">Marks</h1>
+        </div>
+        <div><i class="fas fa-chalkboard-teacher"></i></div>
+      </div>
+
+      <div class="recent-grid">
+        <div class="projects">
+          <div class="card">
+            <div class="card-header">
+              <h3 id="recent-title" style="text-align: center; width: 100%">
+                Recent Students
+              </h3>
+            </div>
+
+            <div class="card-body">
+              <div class="top-actions" style="
+                    margin-bottom: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                  ">
+              </div>
+
+              <div class="table-responsive">
+                <table width="100%">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td>ID</td>
+                      <td>Name</td>
+                      <td>Department</td>
+                      <td>Status</td>
+                      <td>Actions</td>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-body">
+                    <!-- Filled by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div id="bulk-actions" style="display: none; margin-top: 10px">
+                <button id="delete-selected" style="
+                      background-color: #dc3545;
+                      color: white;
+                      padding: 6px 12px;
+                      border: none;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      font-size: 14px;
+                    ">
+                  Delete Selected
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions Section -->
+
+      <!-- Department Performance Section -->
+    </main>
+  </div>
+
+  <!-- Compact Create/Edit User Modal -->
+  <div id="user-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="modal-title">Add New User</h2>
+      <form id="user-form">
+        <input type="hidden" id="user-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="user-role">Role</label>
+            <select id="user-role" required>
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+              <option value="hod">HOD</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="user-status">Status</label>
+            <select id="user-status" required>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="user-name">Full Name</label>
+          <input type="text" id="user-name" placeholder="Enter full name" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="user-email">Email</label>
+            <input type="email" id="user-email" placeholder="Enter email" required />
+          </div>
+          <div class="form-group">
+            <label for="user-department">Department</label>
+            <select id="user-department" required>
+              <option value="">Select Department</option>
+              <option value="Computer Science">CS</option>
+              <option value="Electrical Engineering">EE</option>
+              <option value="Mechanical Engineering">ME</option>
+              <option value="Civil Engineering">CE</option>
+              <option value="Information Technology">IT</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="user-password">Password</label>
+          <input type="password" id="user-password" placeholder="Enter password" required />
+        </div>
+        <div class="form-buttons">
+          <button type="button" id="cancel-form" class="btn-secondary">
+            Cancel
+          </button>
+          <button type="submit" id="save-user" class="btn-primary">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Mark Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel"
+      aria-hidden="true">
+
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="attendanceModalLabel">
+              Mark Attendance
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="attendanceForm">
+              <div class="mb-3">
+                <label for="studentSelect" class="form-label">Student</label>
+                <select class="form-select" id="studentSelect" required>
+                  <option value="" selected disabled>
+                    Loading students...
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="dateInput" class="form-label">Date</label>
+                <input type="date" class="form-control" id="dateInput" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Status</label><br />
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="present" value="present" checked />
+                  <label class="form-check-label" for="present">Present</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="absent" value="absent" />
+                  <label class="form-check-label" for="absent">Absent</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="leave" value="leave" />
+                  <label class="form-check-label" for="leave">Leave</label>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="facultySelect" class="form-label">Marked By</label>
+                <select class="form-select" id="facultySelect" required>
+                  <option value="" selected disabled>
+                    Loading faculty...
+                  </option>
+                </select>
+              </div>
+
+              <div class="text-end">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title" id="editModalLabel">Edit Attendance</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm">
+            <input type="hidden" id="editId" />
+            <div class="mb-3">
+              <label for="editStudent" class="form-label">Student</label>
+              <select class="form-select" id="editStudent" required>
+                <option value="" selected disabled>
+                  Loading students...
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="editDate" class="form-label">Date</label>
+              <input type="text" class="form-control" id="editDate" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Status</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="editStatus" id="editPresent" value="present" />
+                <label class="form-check-label" for="editPresent">Present</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="editStatus" id="editAbsent" value="absent" />
+                <label class="form-check-label" for="editAbsent">Absent</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="editStatus" id="editLeave" value="leave" />
+                <label class="form-check-label" for="editLeave">Leave</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="editFaculty" class="form-label">Marked By</label>
+              <select class="form-select" id="editFaculty" required>
+                <option value="" selected disabled>Loading faculty...</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" id="saveChangesBtn">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <h2>Enter Marks</h2>
+    <form id="markForm" class="form">
+        <div class="form-group">
+            <label for="studentRollNumber">Student Roll Number</label>
+            <select 
+                id="studentSelect" 
+                name="studentRollNumber" 
+                required
+                class="form-control">
+                <option value="" disabled selected>Select Student Roll Number</option>
+                <!-- Student options populated via JavaScript -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="marksObtained">Marks Obtained</label>
+            <input 
+                type="number" 
+                id="marksObtained" 
+                name="marksObtained" 
+                required 
+                min="0" 
+                max="100"
+                placeholder="Enter marks (0-100)">
+        </div>
+
+        <div class="form-group">
+            <label for="gradedBy">Grading Faculty</label>
+            <select 
+                id="facultySelect" 
+                name="gradedBy" 
+                required
+                class="form-control">
+                <option value="" disabled selected>Select Grading Faculty</option>
+                <!-- Faculty options populated via JavaScript -->
+            </select>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Marks</button>
+    </form>
+</div>
+
+<script>
+  // Helper to show alerts
+  function showAlert(message, type) {
+      let alertContainer = document.getElementById('alertContainer');
+      if (!alertContainer) {
+          alertContainer = document.createElement('div');
+          alertContainer.id = 'alertContainer';
+          alertContainer.className = 'position-fixed top-0 end-0 p-3';
+          alertContainer.style.zIndex = '9999';
+          document.body.appendChild(alertContainer);
+      }
+  
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.setAttribute('role', 'alert');
+      alertDiv.innerHTML = `
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      alertContainer.prepend(alertDiv);
+  
+      setTimeout(() => alertDiv.remove(), 5000);
+  }
+  
+  // Populate students
+  async function populateStudentDropdown() {
+      try {
+          const res = await fetch('/api/auth/students');
+          const students = await res.json();
+          const studentSelect = document.getElementById('studentSelect');
+  
+          studentSelect.innerHTML = `<option value="" disabled selected>Select Student Roll Number</option>`;
+          students.forEach(student => {
+              const option = document.createElement('option');
+              option.value = student.rollNumber;
+              option.textContent = student.rollNumber;
+              studentSelect.appendChild(option);
+          });
+      } catch (error) {
+          console.error('Error loading students:', error);
+          showAlert('Error loading student data', 'danger');
+      }
+  }
+  
+  // Populate faculty dropdown
+  async function populateFacultyDropdown(selectElementId = 'markFormFacultySelect') {
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+          alert("Please login to continue.");
+          window.location.href = "/frontend/dashboard/index.html";
+          return;
+      }
+  
+      try {
+          const facultySelect = document.getElementById(selectElementId);
+          if (!facultySelect) {
+              console.error(`Faculty select element with ID '${selectElementId}' not found`);
+              return;
+          }
+  
+          facultySelect.innerHTML = `<option value="" disabled selected>Loading faculty data...</option>`;
+          facultySelect.disabled = true;
+  
+          const res = await fetch("http://localhost:5000/api/users/role/faculty", {
+              headers: { Authorization: `Bearer ${token}` }
+          });
+  
+          const facultyData = await res.json();
+          facultySelect.innerHTML = `<option value="" disabled selected>Select Faculty</option>`;
+  
+          if (!facultyData.data || !Array.isArray(facultyData.data)) {
+              throw new Error("Invalid faculty data format");
+          }
+  
+          facultyData.data.forEach(faculty => {
+              const option = document.createElement('option');
+              option.value = faculty._id;
+              option.textContent = `${faculty.name} (${faculty.department || 'N/A'})`;
+              facultySelect.appendChild(option);
+          });
+  
+          const currentRole = localStorage.getItem("userRole");
+          const currentUserId = localStorage.getItem("userId");
+          if (currentRole === "faculty") {
+              facultySelect.value = currentUserId;
+          }
+  
+          facultySelect.disabled = false;
+      } catch (err) {
+          console.error(`Faculty dropdown (${selectElementId}) load error:`, err);
+          showAlert('Error loading faculty data: ' + err.message, 'danger');
+          const facultySelect = document.getElementById(selectElementId);
+          if (facultySelect) {
+              facultySelect.innerHTML = `<option value="" disabled selected>Error loading faculty data</option>`;
+              facultySelect.disabled = false;
+          }
+      }
+  }
+  
+  // Handle marks form submission
+  async function handleMarkFormSubmit(e) {
+      e.preventDefault();
+  
+      const formData = {
+          student: document.getElementById('studentSelect').value.trim(),
+          marksObtained: Number(document.getElementById('marksObtained').value.trim()),
+          gradedBy: document.getElementById('markFormFacultySelect').value
+      };
+  
+      if (!formData.student || !formData.gradedBy || isNaN(formData.marksObtained)) {
+          showAlert('❌ Please fill in all fields correctly.', 'danger');
+          return;
+      }
+  
+      try {
+          const res = await fetch('http://localhost:5000/api/marks', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+              },
+              body: JSON.stringify(formData)
+          });
+  
+          const result = await res.json();
+  
+          if (res.ok) {
+              showAlert(`✅ Mark submitted successfully!`, 'success');
+              document.getElementById('markForm').reset();
+          } else {
+              showAlert(`❌ Error: ${result.message}`, 'danger');
+          }
+      } catch (err) {
+          console.error('Submission error:', err);
+          showAlert('❌ Failed to submit marks. Please try again.', 'danger');
+      }
+  }
+  
+  // On page load
+  document.addEventListener('DOMContentLoaded', () => {
+      // Ensure unique IDs for dropdowns
+      const markFacultySelect = document.querySelector('#markForm select[name="gradedBy"]');
+      if (markFacultySelect && markFacultySelect.id !== 'markFormFacultySelect') {
+          markFacultySelect.id = 'markFormFacultySelect';
+      }
+  
+      populateStudentDropdown();
+      populateFacultyDropdown('markFormFacultySelect');
+  
+      const markForm = document.getElementById('markForm');
+      if (markForm) {
+          markForm.addEventListener('submit', handleMarkFormSubmit);
+      }
+  });
+  </script>
+  
+    
+
+
+
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <script>
+    const studentSelect = document.getElementById("studentSelect");
+    const facultySelect = document.getElementById("facultySelect");
+
+    document.getElementById("openAttendanceModal").addEventListener("click", () => {
+      const modal = new bootstrap.Modal(document.getElementById("attendanceModal"));
+      modal.show();
+    });
+
+    document.getElementById("attendanceModal").addEventListener("show.bs.modal", async () => {
+      await populateDropdowns();
+    });
+
+    async function populateDropdowns() {
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        alert("Please login to continue.");
+        window.location.href = "/frontend/dashboard/index.html";
+        return;
+      }
+
+      try {
+        const [studentRes, facultyRes] = await Promise.all([
+          fetch("http://localhost:5000/api/users/role/student", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:5000/api/users/role/faculty", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!studentRes.ok || !facultyRes.ok) {
+          throw new Error('Failed to fetch dropdown data');
+        }
+
+        const studentData = await studentRes.json();
+        const facultyData = await facultyRes.json();
+
+        studentSelect.innerHTML = `<option value="" disabled selected>Select Student</option>`;
+        (studentData.data || []).forEach((s) => {
+          const option = document.createElement("option");
+          option.value = s._id;
+          option.textContent = `${s.name} (${s.department || s.dept})`;
+          studentSelect.appendChild(option);
+        });
+
+        facultySelect.innerHTML = `<option value="" disabled selected>Select Faculty</option>`;
+        (facultyData.data || []).forEach((f) => {
+          const option = document.createElement("option");
+          option.value = f._id;
+          option.textContent = `${f.name} (${f.department})`;
+          facultySelect.appendChild(option);
+        });
+
+        // Auto-select current user
+        const currentRole = localStorage.getItem("userRole");
+        const currentUserId = localStorage.getItem("userId");
+        if (currentRole === "faculty") facultySelect.value = currentUserId;
+        if (currentRole === "student") studentSelect.value = currentUserId;
+
+      } catch (err) {
+        console.error("Dropdown load error:", err);
+        showAlert('Error loading dropdown data', 'danger');
+      }
+    }
+
+    document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+      const studentId = studentSelect.value;
+      const facultyId = facultySelect.value;
+      const date = document.getElementById("dateInput").value;
+      const status = document.querySelector('input[name="status"]:checked')?.value;
+
+      if (!studentId || !facultyId || !date || !status) {
+        showAlert('Please fill all fields', 'danger');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        return;
+      }
+
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        alert("Please login to continue.");
+        window.location.href = "/frontend/dashboard/index.html";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/api/attendance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ studentId, facultyId, date, status }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showAlert('Attendance submitted successfully!', 'success');
+          document.activeElement?.blur();
+          const modal = bootstrap.Modal.getInstance(document.getElementById("attendanceModal"));
+          modal.hide();
+          document.getElementById("attendanceForm").reset();
+          fetchAttendanceData();
+        } else {
+          showAlert(data.message || "Error posting attendance", 'danger');
+        }
+      } catch (error) {
+        console.error("POST error:", error);
+        showAlert('Network error occurred. Please try again.', 'danger');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    });
+
+    // Function to show alert messages
+    function showAlert(message, type) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.setAttribute('role', 'alert');
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      const container = document.getElementById('alertContainer') || document.body;
+      container.prepend(alertDiv);
+
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 5000);
+    }
+
+    
+ 
+  </script>
+
+
+
+  <script>
+    // DOM Elements
+    const recentTitle = document.getElementById("recent-title");
+    const recentBody = document.getElementById("recent-body");
+    const modal = document.getElementById("user-modal");
+    const modalTitle = document.getElementById("modal-title");
+    const userForm = document.getElementById("user-form");
+    const userId = document.getElementById("user-id");
+    const userRole = document.getElementById("user-role");
+    const userName = document.getElementById("user-name");
+    const userEmail = document.getElementById("user-email");
+    const userPassword = document.getElementById("user-password");
+    const userDepartment = document.getElementById("user-department");
+    const userStatus = document.getElementById("user-status");
+
+    let currentType = "student";
+    let editMode = false;
+    let users = [];
+
+    // Modal Handling
+    function openModal(isEdit = false, userData = null) {
+      userForm.reset();
+
+      if (isEdit && userData) {
+        modalTitle.textContent = "Edit User";
+        userId.value = userData._id;
+        userRole.value = userData.role || currentType;
+        userName.value = userData.name || userData.fullName || "";
+        userEmail.value = userData.email || "";
+        userDepartment.value = userData.dept || userData.department || "";
+        userStatus.value = userData.status || "active";
+
+        const currentUserRole = localStorage.getItem("userRole");
+        userRole.disabled = currentUserRole !== "admin";
+        userPassword.placeholder =
+          "Enter new password (leave empty to keep current)";
+        userPassword.required = false;
+      } else {
+        modalTitle.textContent = "Add New User";
+        userId.value = "";
+        userRole.value = currentType;
+        userRole.disabled = false;
+        userPassword.placeholder = "Enter password";
+        userPassword.required = true;
+      }
+
+      modal.style.display = "block";
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+      userForm.reset();
+    }
+
+    document
+      .querySelector(".close-modal")
+      .addEventListener("click", closeModal);
+    document
+      .getElementById("cancel-form")
+      .addEventListener("click", closeModal);
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Form Submission
+    userForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = {
+        role: userRole.value,
+        email: userEmail.value,
+        status: userStatus.value,
+      };
+
+      if (userRole.value === "student") {
+        formData.name = userName.value;
+        formData.dept = userDepartment.value;
+      } else {
+        formData.fullName = userName.value;
+        formData.department = userDepartment.value;
+      }
+
+      if (userPassword.value) formData.password = userPassword.value;
+
+      const isEditing = userId.value !== "";
+      const endpoint = isEditing
+        ? `http://localhost:5000/api/users/${userId.value}`
+        : "http://localhost:5000/api/auth/register";
+      const method = isEditing ? "PUT" : "POST";
+
+      try {
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+          alert("Please login to continue.");
+          return (window.location.href = "/frontend/dashboard/index.html");
+        }
+
+        const response = await fetch(endpoint, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Operation failed");
+
+        alert(`User ${isEditing ? "updated" : "created"} successfully`);
+        closeModal();
+        displayRecentData(currentType);
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+        console.error(err);
+      }
+    });
+
+    // Fetch Data by Role
+    async function fetchData(type) {
+      try {
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+          alert("Please login to continue.");
+          window.location.href = "/frontend/dashboard/index.html";
+          return [];
+        }
+
+        const res = await fetch(
+          `http://localhost:5000/api/users/role/${type}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.status === 401) {
+          alert("Session expired. Please login again.");
+          return (window.location.href = "/frontend/dashboard/index.html");
+        }
+
+        if (!res.ok) throw new Error("Failed to fetch users");
+
+        const result = await res.json();
+        return result.data || [];
+      } catch (err) {
+        console.error(err);
+        recentBody.innerHTML = `<tr><td colspan="6">Error loading data</td></tr>`;
+        return [];
+      }
+    }
+
+    // Display Table
+    async function displayRecentData(type) {
+      currentType = type;
+      recentTitle.textContent = `Recent ${capitalizeFirstLetter(type)}s`;
+      recentBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
+      try {
+        users = await fetchData(type);
+        if (!users.length) {
+          return (recentBody.innerHTML =
+            "<tr><td colspan='6'>No data found</td></tr>");
+        }
+
+        recentBody.innerHTML = "";
+        users.forEach((user, i) => {
+          const row = document.createElement("tr");
+          row.innerHTML = createRow(user, i);
+          recentBody.appendChild(row);
+        });
+
+        document.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            const user = users.find((u) => u._id === id);
+            openModal(true, user);
+          });
+        });
+
+        document.querySelectorAll(".btn-delete").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            if (confirm("Delete this user?")) await deleteUser(id);
+          });
+        });
+
+        setupSelectAllCheckbox();
+      } catch (err) {
+        recentBody.innerHTML =
+          "<tr><td colspan='6'>Error loading data</td></tr>";
+      }
+    }
+
+    // Row Markup
+    function createRow(user, index) {
+      return `
+                                  <td>${editMode
+          ? `<input type="checkbox" class="user-checkbox" data-id="${user._id}" />`
+          : ""
+        }</td>
+                                  <td>${index + 1}</td>
+                                  <td>${user.name || user.fullName || "N/A"
+        }</td>
+                                  <td>${user.dept || user.department || "N/A"
+        }</td>
+                                  <td><span class="status ${user.status || "active"
+        }">${user.status || "active"}</span></td>
+                                  <td>
+                                    <div class="action-buttons">
+                                      <button class="btn-primary btn-sm btn-edit" data-id="${user._id
+        }">
+                                        <i class="fas fa-edit"></i>
+                                      </button>
+                                  
+                                    </div>
+                                  </td>
+                                `;
+    }
+
+    // Delete Single User
+    async function deleteUser(id) {
+      try {
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+          alert("Please login.");
+          return (window.location.href = "/frontend/dashboard/index.html");
+        }
+
+        const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Delete failed");
+
+        alert(data.message || "User deleted");
+        displayRecentData(currentType);
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+        console.error(err);
+      }
+    }
+
+    // Bulk Delete
+    document
+      .getElementById("delete-selected")
+      .addEventListener("click", async () => {
+        const selectedIds = Array.from(
+          document.querySelectorAll(".user-checkbox:checked")
+        ).map((cb) => cb.dataset.id);
+
+        if (!selectedIds.length) return alert("No users selected");
+        if (!confirm("Delete selected users?")) return;
+
+        try {
+          const token = localStorage.getItem("userToken");
+          const res = await fetch(
+            "http://localhost:5000/api/users/bulk-delete",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ ids: selectedIds }),
+            }
+          );
+
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Bulk delete failed");
+
+          alert(data.message || "Users deleted");
+          displayRecentData(currentType);
+        } catch (err) {
+          alert(`Error: ${err.message}`);
+          console.error(err);
+        }
+      });
+
+    // Select All Handling
+    function setupSelectAllCheckbox() {
+      const selectAll = document.getElementById("select-all");
+      if (!selectAll) return;
+      selectAll.checked = false;
+      selectAll.addEventListener("change", (e) => {
+        document
+          .querySelectorAll(".user-checkbox")
+          .forEach((cb) => (cb.checked = e.target.checked));
+      });
+    }
+
+    // Utilities
+    function capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Role Filter Buttons
+    document.querySelectorAll(".card-single").forEach((card) => {
+      card.addEventListener("click", () => {
+        const type = card.getAttribute("data-type");
+        displayRecentData(type);
+      });
+    });
+
+    // Toggle Bulk Delete Mode
+    document
+     // .getElementById("toggle-edit-mode")
+     // .addEventListener("click", () => {
+     //   editMode = !editMode;
+     //   displayRecentData(currentType);
+     //   document.getElementById("bulk-actions").style.display = editMode
+     //     ? "block"
+     //     : "none";
+     // });
+
+    // Initial Fetch
+    window.addEventListener("DOMContentLoaded", () => {
+      displayRecentData(currentType);
+    });
+  </script>
+</body>
+
+</html>

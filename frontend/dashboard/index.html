@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Portal - Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .custom-alert.error {
+            background-color: #ff4444;
+        }
+        
+        .custom-alert.success {
+            background-color: #00C851;
+        }
+        
+        .custom-alert.info {
+            background-color: #33b5e5;
+        }
+        
+        .custom-alert .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 16px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        /* Role-specific fields container */
+        #roleSpecificFields {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        /* Input field styling */
+        .input-field select {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: none;
+            outline: none;
+            background: none;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .password-toggle:hover {
+            color: #555;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+
+                <!-- Login Form -->
+                <form action="#" class="sign-in-form" id="loginForm">
+                    <h2 class="title">Sign in</h2>
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword" style="display: none;"></i>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-users"></i>
+                        <select id="loginRole" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="hod">HOD</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    
+                    <input type="submit" value="Login" class="btn solid">
+                    <p class="social-text">Or Sign in with social platforms</p>
+                    <div class="social-media">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form action="#" class="sign-up-form" id="signupForm">
+                    <h2 class="title">Sign up</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="signupUsername" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupPassword" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleSignupPassword"></i>
+                    </div>
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-users"></i>
+                        <select id="signupRole" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="hod">HOD</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Container for dynamic role-specific fields -->
+                    <div id="roleSpecificFields"></div>
+                    
+                    
+                    
+                    <input type="submit" class="btn" value="Sign up">
+                    <p class="social-text">Or Sign up with social platforms</p>
+                    <div class="social-media">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Panels -->
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New here?</h3>
+                    <p>Create an account to access the educational portal with your specific role!</p>
+                    <button class="btn transparent" id="sign-up-btn">Sign up</button>
+                </div>
+            </div>
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>Already a user?</h3>
+                    <p>If you already have an account, just sign in. We've missed you!</p>
+                    <button class="btn transparent" id="sign-in-btn">Sign in</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // DOM Elements
+        const sign_in_btn = document.querySelector("#sign-in-btn");
+        const sign_up_btn = document.querySelector("#sign-up-btn");
+        const container = document.querySelector(".container");
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const roleSpecificFields = document.getElementById('roleSpecificFields');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        
+        // Toggle Sign Up/Login forms
+        sign_up_btn?.addEventListener("click", () => {
+            container.classList.add("sign-up-mode");
+            document.getElementById('signupEmail').focus();
+        });
+        
+        sign_in_btn?.addEventListener("click", () => {
+            container.classList.remove("sign-up-mode");
+            document.getElementById('loginEmail').focus();
+        });
+        
+        // Password toggle functionality
+        function setupPasswordToggle(passwordFieldId, toggleIconId) {
+            const passwordField = document.getElementById(passwordFieldId);
+            const toggleIcon = document.getElementById(toggleIconId);
+            
+            if (passwordField && toggleIcon) {
+                toggleIcon.style.display = 'block';
+                
+                toggleIcon.addEventListener('click', () => {
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+                    } else {
+                        passwordField.type = 'password';
+                        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+                    }
+                });
+            }
+        }
+        
+        // Initialize password toggles
+        setupPasswordToggle('loginPassword', 'toggleLoginPassword');
+        setupPasswordToggle('signupPassword', 'toggleSignupPassword');
+        setupPasswordToggle('signupConfirmPassword', 'toggleConfirmPassword');
+        
+        // Login Form Handler
+        loginForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const loginBtn = e.target.querySelector('[type="submit"]');
+            const originalBtnText = loginBtn.innerHTML;
+        
+            try {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const role = document.getElementById('loginRole').value;
+        
+                // Validation
+                if (!email || !password || !role) throw new Error('Please fill in all fields');
+                if (!validateEmail(email)) throw new Error('Please enter a valid email address');
+        
+                // API Request
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role })
+                });
+        
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Login failed');
+        
+                // Success Handling
+                storeAuthData(data);
+                redirectAfterLogin(data.user.role);
+        
+            } catch (error) {
+                showAlert('error', error.message);
+                document.getElementById('loginPassword').value = '';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = originalBtnText;
+            }
+        });
+        
+        // Signup Form Handler
+        signupForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const signupBtn = e.target.querySelector('[type="submit"]');
+            const originalBtnText = signupBtn.innerHTML;
+        
+            try {
+                signupBtn.disabled = true;
+                signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+        
+                // Form Data
+                const name = document.getElementById('signupUsername').value.trim();
+                const email = document.getElementById('signupEmail').value.trim();
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('signupConfirmPassword').value;
+                const role = document.getElementById('signupRole').value;
+                const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+                // Validation
+                validateSignupForm(name, email, password, confirmPassword, role);
+                
+                const signupData = { name, email, password, role };
+        
+                // Role-specific Fields
+                switch(role) {
+                    case 'student':
+                        signupData.rollNumber = document.getElementById('studentRollNumber')?.value.trim();
+                        signupData.department = document.getElementById('studentDepartment')?.value;
+                        signupData.semester = document.getElementById('studentSemester')?.value;
+                        
+                        if (!signupData.rollNumber || !signupData.department || !signupData.semester) {
+                            throw new Error('Please fill all student-specific fields');
+                        }
+                        break;
+                    case 'faculty':
+                    case 'hod':
+                        signupData.department = document.getElementById('facultyDepartment')?.value;
+                        if (!signupData.department) {
+                            throw new Error('Please select a department');
+                        }
+                        break;
+                }
+        
+                // API Request
+                const response = await fetch('http://localhost:5000/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(signupData)
+                });
+        
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Registration failed');
+        
+                // Success Handling
+                showAlert('success', 'Account created successfully! Please login.');
+                container.classList.remove('sign-up-mode');
+                signupForm.reset();
+                roleSpecificFields.innerHTML = '';
+                document.getElementById('agreeTerms').checked = false;
+        
+            } catch (error) {
+                showAlert('error', error.message);
+            } finally {
+                signupBtn.disabled = false;
+                signupBtn.innerHTML = originalBtnText;
+            }
+        });
+        
+        // Dynamic Role Fields
+        document.getElementById('signupRole')?.addEventListener('change', (e) => {
+            const role = e.target.value;
+            roleSpecificFields.innerHTML = '';
+        
+            if (role === 'student') {
+                roleSpecificFields.innerHTML = `
+                    <div class="input-field">
+                        <i class="fas fa-id-badge"></i>
+                        <input type="text" id="studentRollNumber" placeholder="Roll Number" required>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-building"></i>
+                        <select id="studentDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-layer-group"></i>
+                        <select id="studentSemester" required>
+                            <option value="">Select Semester</option>
+                            ${Array.from({ length: 8 }, (_, i) => `<option value="${i + 1}">Semester ${i + 1}</option>`).join('')}
+                        </select>
+                    </div>`;
+            } else if (role === 'faculty' || role === 'hod') {
+                roleSpecificFields.innerHTML = `
+                    <div class="input-field">
+                        <i class="fas fa-building"></i>
+                        <select id="facultyDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                        </select>
+                    </div>`;
+            }
+            
+            // Set up password toggles for any new password fields
+            setupPasswordToggle('studentPassword', 'toggleStudentPassword');
+        });
+        
+        // Forgot Password Link
+        forgotPasswordLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAlert('info', 'Password reset functionality coming soon!');
+        });
+        
+        // Terms Link
+        document.getElementById('termsLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAlert('info', 'Terms and conditions will be displayed here.');
+        });
+        
+        // Helper Functions
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        function validateSignupForm(name, email, password, confirmPassword, role) {
+            if (!name || !email || !password || !confirmPassword || !role) {
+                throw new Error('Please fill in all fields');
+            }
+            if (!validateEmail(email)) throw new Error('Please enter a valid email');
+            if (password !== confirmPassword) throw new Error('Passwords do not match!');
+            if (password.length < 8) throw new Error('Password must be at least 8 characters');
+            if (!/[A-Z]/.test(password)) throw new Error('Password must contain at least one uppercase letter');
+            if (!/[a-z]/.test(password)) throw new Error('Password must contain at least one lowercase letter');
+            if (!/[0-9]/.test(password)) throw new Error('Password must contain at least one number');
+        }
+        
+        function storeAuthData(data) {
+            localStorage.setItem('userToken', data.token);
+            localStorage.setItem('userRole', data.user.role.toLowerCase());
+            localStorage.setItem('userData', JSON.stringify(data.user));
+        }
+        
+        function redirectAfterLogin(role) {
+            if (!role) {
+                showAlert("error", "Invalid user role. Please contact administrator.");
+                return;
+            }
+            
+            const normalizedRole = role.toLowerCase().trim();
+            const basePath = window.location.origin;
+            
+            // Dashboard paths with correct directory structure
+            const dashboardPaths = {
+                admin: `${basePath}/frontend/dashboard/admin-dashboard.html`,
+                hod: `${basePath}/frontend/dashboard/hod-dashboard.html`,
+                faculty: `${basePath}/frontend/dashboard/faculty-dashboard.html`,
+                student: `${basePath}/frontend/dashboard/student-dashboard.html`
+            };
+            
+            if (dashboardPaths[normalizedRole]) {
+                showAlert("success", `Login successful! Redirecting to ${normalizedRole} dashboard...`);
+                
+                setTimeout(() => {
+                    window.location.href = dashboardPaths[normalizedRole];
+                }, 1500);
+            } else {
+                console.error(`Invalid role encountered: ${role}`);
+                showAlert("error", `Invalid role: ${role}. Please contact administrator.`);
+                localStorage.clear();
+            }
+        }
+        
+        function showAlert(type, message) {
+            // Remove any existing alerts first
+            const existingAlerts = document.querySelectorAll('.custom-alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `custom-alert ${type}`;
+            alertDiv.innerHTML = `
+                <span>${message}</span>
+                <button class="close-btn">&times;</button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Add click event to close button
+            alertDiv.querySelector('.close-btn').addEventListener('click', () => {
+                alertDiv.classList.add('fade-out');
+                setTimeout(() => alertDiv.remove(), 300);
+            });
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.classList.add('fade-out');
+                    setTimeout(() => alertDiv.remove(), 300);
+                }
+            }, 5000);
+        }
+        
+        // Authentication check on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('userToken');
+            const userRole = localStorage.getItem('userRole');
+            const currentPath = window.location.pathname;
+            
+            // Redirect if logged in and on login page
+            if (token && userRole && (currentPath.endsWith('/') || 
+                currentPath.endsWith('/index.html') || 
+                currentPath.endsWith('/login.html'))) {
+                showAlert('info', `Welcome back! Redirecting to your dashboard...`);
+                setTimeout(() => redirectAfterLogin(userRole), 1000);
+            }
+            
+            // Check for logout parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('logout')) {
+                localStorage.clear();
+                showAlert('success', 'You have been logged out successfully.');
+                // Clean URL without reload
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Set focus to email field
+            if (document.getElementById('loginEmail') && !container.classList.contains('sign-up-mode')) {
+                document.getElementById('loginEmail').focus();
+            } else if (document.getElementById('signupUsername')) {
+                document.getElementById('signupUsername').focus();
+            }
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const token = localStorage.getItem('userToken');
+            const userRole = localStorage.getItem('userRole');
+            const currentPath = window.location.pathname;
+            
+            if (token && userRole && (currentPath.endsWith('/') || 
+                currentPath.endsWith('/index.html') || 
+                currentPath.endsWith('/login.html'))) {
+                redirectAfterLogin(userRole);
+            }
+        });
+    </script>
+</body>
+</html>

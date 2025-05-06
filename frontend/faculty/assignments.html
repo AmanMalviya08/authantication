@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="../css/faculty.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Faculty Panel</span>
+        </div>
+        <ul class="nav-list">
+            <li class="active">
+                <a href="../dashboard/faculty-dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="courses.html">
+                    <i class="fas fa-book"></i>
+                    <span>My Courses</span>
+                </a>
+            </li>
+            <li>
+                <a href="students.html">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li>
+                <a href="attendance.html">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Attendance</span>
+                </a>
+            </li>
+            <li>
+                <a href="assignments.html">
+                    <i class="fas fa-tasks"></i>
+                    <span>Assignments</span>
+                </a>
+            </li>
+        </ul>
+        <div class="logout">
+            <a href="../dashboard/index.html">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </h1>
+            <div class="user-wrapper">
+                <img src="images/faculty-avatar.jpg" width="40px" height="40px" alt="">
+                <div>
+                    <h4>Dr. Johnson</h4>
+                    <small>Associate Professor</small>
+                </div>
+            </div>
+        </header>
+</div>
+       
+<div class="main-content">
+    <header>
+        <h1>
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </h1>
+        <div class="user-wrapper">
+            <img src="images/student-avatar.jpg" width="40px" height="40px" alt="">
+            <div>
+                <h4>John Doe</h4>
+                <small>Computer Science - 3rd Year</small>
+            </div>
+        </div>
+    </header>
+
+    <style>
+        /* Base styles inherited from faculty.css */
+
+/* Assignment Page Specific Styles */
+.assignments-container {
+background-color: #fff;
+border-radius: 10px;
+padding: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+margin-bottom: 20px;
+}
+
+.assignments-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.btn-primary {
+background-color: #4361ee;
+color: white;
+border: none;
+padding: 10px 15px;
+border-radius: 5px;
+cursor: pointer;
+font-weight: 500;
+display: flex;
+align-items: center;
+gap: 5px;
+transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+background-color: #3a56d4;
+}
+
+.assignments-filter {
+display: flex;
+gap: 15px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+
+.filter-group select {
+padding: 8px 12px;
+border-radius: 5px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+width: 180px;
+}
+
+.search-box {
+flex-grow: 1;
+position: relative;
+}
+
+.search-box input {
+width: 100%;
+padding: 8px 35px 8px 12px;
+border-radius: 5px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+}
+
+.search-box i {
+position: absolute;
+right: 12px;
+top: 50%;
+transform: translateY(-50%);
+color: #777;
+}
+
+/* Table Styles */
+.assignments-list table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 15px;
+}
+
+.assignments-list th, 
+.assignments-list td {
+padding: 12px 15px;
+text-align: left;
+border-bottom: 1px solid #eee;
+}
+
+.assignments-list th {
+background-color: #f6f8ff;
+color: #333;
+font-weight: 600;
+}
+
+.assignments-list tr:hover {
+background-color: #f9faff;
+}
+
+.actions {
+display: flex;
+gap: 8px;
+}
+
+.btn-view, .btn-edit, .btn-delete {
+width: 32px;
+height: 32px;
+border-radius: 4px;
+border: none;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+
+.btn-view {
+background-color: #4cc9f0;
+color: white;
+}
+
+.btn-edit {
+background-color: #f8961e;
+color: white;
+}
+
+.btn-delete {
+background-color: #ef476f;
+color: white;
+}
+
+.btn-view:hover, .btn-edit:hover, .btn-delete:hover {
+opacity: 0.9;
+}
+
+/* Modal Styles */
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 1000;
+overflow: auto;
+}
+
+.modal-content {
+background-color: white;
+margin: 50px auto;
+width: 90%;
+max-width: 700px;
+border-radius: 10px;
+overflow: hidden;
+}
+
+.modal-header {
+background-color: #4361ee;
+color: white;
+padding: 15px 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.close-modal {
+font-size: 28px;
+font-weight: bold;
+cursor: pointer;
+}
+
+.modal-body {
+padding: 20px;
+}
+
+.form-group {
+margin-bottom: 15px;
+}
+
+.form-row {
+display: flex;
+gap: 15px;
+margin-bottom: 15px;
+}
+
+.form-row .form-group {
+flex: 1;
+margin-bottom: 0;
+}
+
+label {
+display: block;
+margin-bottom: 5px;
+font-weight: 500;
+color: #333;
+}
+
+input, select, textarea {
+width: 100%;
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 5px;
+font-family: inherit;
+}
+
+textarea {
+resize: vertical;
+}
+
+.form-actions {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+margin-top: 20px;
+}
+
+.btn-secondary {
+background-color: #e0e0e0;
+color: #333;
+border: none;
+padding: 10px 15px;
+border-radius: 5px;
+cursor: pointer;
+font-weight: 500;
+}
+
+.btn-secondary:hover {
+background-color: #d0d0d0;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+.form-row {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.assignments-filter {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-group select {
+    width: 100%;
+}
+
+.assignments-list {
+    overflow-x: auto;
+}
+
+.modal-content {
+    width: 95%;
+    margin: 20px auto;
+}
+}
+    </style>
+        <main>
+            <div class="assignments-container">
+                <div class="assignments-header">
+                    <h2>Manage Assignments</h2>
+                    <button class="btn-primary" id="createAssignmentBtn">
+                        <i class="fas fa-plus"></i> Create Assignment
+                    </button>
+                </div>
+    
+                <div class="assignments-filter">
+                    <div class="filter-group">
+                        <select id="subjectFilter">
+                            <option value="">All Subjects</option>
+                            <option value="subject1">Data Structures</option>
+                            <option value="subject2">Database Management</option>
+                            <option value="subject3">Web Development</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="semesterFilter">
+                            <option value="">All Semesters</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="departmentFilter">
+                            <option value="">All Departments</option>
+                            <option value="CS">Computer Science</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="ECE">Electronics & Communication</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="Search assignments...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+    
+                <div class="assignments-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th>Department</th>
+                                <th>Semester</th>
+                                <th>Due Date</th>
+                                <th>Max Marks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Database Normalization</td>
+                                <td>Database Management</td>
+                                <td>CS</td>
+                                <td>3</td>
+                                <td>Apr 25, 2025</td>
+                                <td>50</td>
+                                <td class="actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Web Application Project</td>
+                                <td>Web Development</td>
+                                <td>IT</td>
+                                <td>4</td>
+                                <td>Apr 30, 2025</td>
+                                <td>100</td>
+                                <td class="actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Binary Search Trees</td>
+                                <td>Data Structures</td>
+                                <td>CS</td>
+                                <td>2</td>
+                                <td>May 05, 2025</td>
+                                <td>30</td>
+                                <td class="actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <!-- Assignment Modal Form -->
+            <div class="modal" id="assignmentModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Create Assignment</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="assignmentForm">
+                            <div class="form-group">
+                                <label for="title">Assignment Title</label>
+                                <input type="text" id="title" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" rows="4" required></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="subject">Subject</label>
+                                    <select id="subject" name="subject" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="subject1">Data Structures</option>
+                                        <option value="subject2">Database Management</option>
+                                        <option value="subject3">Web Development</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="department">Department</label>
+                                    <select id="department" name="department" required>
+                                        <option value="">Select Department</option>
+                                        <option value="CS">Computer Science</option>
+                                        <option value="IT">Information Technology</option>
+                                        <option value="ECE">Electronics & Communication</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="semester">Semester</label>
+                                    <select id="semester" name="semester" required>
+                                        <option value="">Select Semester</option>
+                                        <option value="1">Semester 1</option>
+                                        <option value="2">Semester 2</option>
+                                        <option value="3">Semester 3</option>
+                                        <option value="4">Semester 4</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="maxMarks">Maximum Marks</label>
+                                    <input type="number" id="maxMarks" name="maxMarks" min="1" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dueDate">Due Date</label>
+                                <input type="date" id="dueDate" name="dueDate" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Assignment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal handling
+            const modal = document.getElementById('assignmentModal');
+            const createBtn = document.getElementById('createAssignmentBtn');
+            const closeBtn = document.querySelector('.close-modal');
+            const cancelBtn = document.getElementById('cancelBtn');
+    
+            createBtn.addEventListener('click', function () {
+                modal.style.display = 'block';
+            });
+    
+            closeBtn.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+    
+            cancelBtn.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+    
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+    
+            // Form submission
+            const assignmentForm = document.getElementById('assignmentForm');
+            assignmentForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+    
+                const assignmentData = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    subject: document.getElementById('subject').value,
+                    department: document.getElementById('department').value,
+                    semester: document.getElementById('semester').value,
+                    maxMarks: document.getElementById('maxMarks').value,
+                    dueDate: document.getElementById('dueDate').value,
+                };
+    
+                try {
+                    const response = await fetch('http://localhost:5000/api/assignments/role_permission_db', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(assignmentData),
+                    });
+    
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert('Assignment created and saved to database!');
+                        modal.style.display = 'none';
+                        assignmentForm.reset();
+                    } else {
+                        alert('Failed to save assignment: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('Error connecting to server.');
+                    console.error(error);
+                }
+            });
+    
+            // Filter functionality
+            const subjectFilter = document.getElementById('subjectFilter');
+            const semesterFilter = document.getElementById('semesterFilter');
+            const departmentFilter = document.getElementById('departmentFilter');
+            const searchInput = document.querySelector('.search-box input');
+            const tableRows = document.querySelectorAll('.assignments-list tbody tr');
+    
+            function filterAssignments() {
+                const subjectValue = subjectFilter.value.toLowerCase();
+                const semesterValue = semesterFilter.value.toLowerCase();
+                const departmentValue = departmentFilter.value.toLowerCase();
+                const searchValue = searchInput.value.toLowerCase();
+    
+                tableRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const rowSubject = cells[1].textContent.toLowerCase();
+                    const rowDepartment = cells[2].textContent.toLowerCase();
+                    const rowSemester = cells[3].textContent.toLowerCase();
+                    const rowText = row.textContent.toLowerCase();
+    
+                    const subjectMatch = subjectValue === '' || rowSubject.includes(subjectValue);
+                    const semesterMatch = semesterValue === '' || rowSemester.includes(semesterValue);
+                    const departmentMatch = departmentValue === '' || rowDepartment.includes(departmentValue);
+                    const searchMatch = rowText.includes(searchValue);
+    
+                    row.style.display = (subjectMatch && semesterMatch && departmentMatch && searchMatch) ? '' : 'none';
+                });
+            }
+    
+            subjectFilter.addEventListener('change', filterAssignments);
+            semesterFilter.addEventListener('change', filterAssignments);
+            departmentFilter.addEventListener('change', filterAssignments);
+            searchInput.addEventListener('input', filterAssignments);
+    
+            // Action buttons
+            document.querySelectorAll('.btn-view').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    alert(`Viewing assignment: ${cells[0].textContent}\nSubject: ${cells[1].textContent}\nDue: ${cells[4].textContent}`);
+                });
+            });
+    
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    alert(`Editing assignment: ${cells[0].textContent}`);
+                    // Populate modal for editing here if needed
+                });
+            });
+    
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (confirm('Are you sure you want to delete this assignment?')) {
+                        const row = this.closest('tr');
+                        row.remove();
+                        alert('Assignment deleted successfully!');
+                    }
+                });
+            });
+        });
+    </script>
+    
+</div>
+
+</body>
+</html>
