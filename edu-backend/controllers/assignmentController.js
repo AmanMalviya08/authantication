@@ -136,26 +136,43 @@ const submitAssignment = asyncHandler(async (req, res) => {
     throw new Error('Assignment not found');
   }
 
+  // Check if file was uploaded
+  if (!req.file) {
+    res.status(400);
+    throw new Error('Please upload a file');
+  }
+
   // Check if already submitted
   const existingSubmission = assignment.submissions.find(
     sub => sub.student.toString() === req.user._id.toString()
   );
 
   if (existingSubmission) {
+    // Delete the newly uploaded file since submission failed
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.error('Error deleting file:', err);
+    });
     res.status(400);
     throw new Error('You have already submitted this assignment');
   }
 
+  // Construct file URL (adjust according to your server setup)
+  const fileUrl = `/uploads/assignments/${req.file.filename}`;
+
   const submission = {
     student: req.user._id,
-    fileUrl: req.body.fileUrl, // Assuming file is uploaded and URL is provided
-    status: new Date() > assignment.dueDate ? 'late' : 'submitted'
+    fileUrl,
+    status: new Date() > assignment.dueDate ? 'late' : 'submitted',
+    comments: req.body.comments || ''
   };
 
   assignment.submissions.push(submission);
   await assignment.save();
   
-  res.status(201).json({ message: 'Assignment submitted successfully' });
+  res.status(201).json({ 
+    message: 'Assignment submitted successfully',
+    submission
+  });
 });
 
 // @desc    Grade assignment submission

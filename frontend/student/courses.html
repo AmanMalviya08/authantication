@@ -1,586 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Dashboard</title>
-    <link rel="stylesheet" href="../css/student.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Portal - Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-      /* Main Content Styles */
-      .main-content {
-        margin-left: 250px;
-        padding: 20px;
-        transition: margin-left 0.3s;
-      }
-      
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-      
-      .user-wrapper {
-        display: flex;
-        align-items: center;
-      }
-      
-      .user-wrapper img {
-        border-radius: 50%;
-        margin-right: 15px;
-      }
-      
-      /* Courses Container */
-      .courses-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-      }
-      
-      .course-card {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: transform 0.3s ease;
-      }
-      
-      .course-card:hover {
-        transform: translateY(-5px);
-      }
-      
-      .course-header {
-        padding: 15px;
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        color: white;
-      }
-      
-      .course-body {
-        padding: 15px;
-      }
-      
-      .course-stats {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 15px;
-        font-size: 0.9em;
-        color: #666;
-      }
-      
-      .stat-item {
-        display: flex;
-        align-items: center;
-      }
-      
-      .stat-item i {
-        margin-right: 5px;
-      }
-      
-      .course-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 15px;
-      }
-      
-      .btn {
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 500;
-      }
-      
-      .btn-view {
-        background: #4CAF50;
-        color: white;
-        width: 100%;
-        text-align: center;
-      }
-      
-      /* Modal styles for course details */
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.7);
-        z-index: 1000;
-        overflow-y: auto;
-      }
-      
-      .modal-content {
-        background: white;
-        margin: 5% auto;
-        padding: 30px;
-        width: 70%;
-        max-width: 800px;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        position: relative;
-      }
-      
-      .close-modal {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        font-size: 28px;
-        cursor: pointer;
-        color: #aaa;
-      }
-      
-      .close-modal:hover {
-        color: #333;
-      }
-      
-      .course-detail-header {
-        padding: 20px;
-        border-radius: 8px;
-        color: white;
-        margin-bottom: 20px;
-      }
-      
-      .course-detail-body {
-        margin-top: 20px;
-      }
-      
-      .course-sections {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-top: 30px;
-      }
-      
-      .course-section {
-        flex: 1;
-        min-width: 250px;
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-      }
-      
-      .course-section h3 {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
-      }
-      
-      .module-list {
-        list-style-type: none;
-        padding-left: 0;
-      }
-      
-      .module-list li {
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
-      }
-      
-      .module-list li:last-child {
-        border-bottom: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="sidebar">
-      <div class="logo">
-        <i class="fas fa-user-graduate"></i>
-        <span>Student Panel</span>
-      </div>
-      <ul class="nav-list">
-        <li>
-          <a href="../dashboard/student-dashboard.html">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="active">
-          <a href="courses.html">
-            <i class="fas fa-book"></i>
-            <span>My Courses</span>
-          </a>
-        </li>
-        <li>
-          <a href="assignment.html">
-            <i class="fas fa-tasks"></i>
-            <span>Assignments</span>
-          </a>
-        </li>
-      </ul>
-      <div class="logout">
-        <a href="../dashboard/index.html">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
-        </a>
-      </div>
-    </div>
-
-    <div class="main-content">
-      <header>
-        <h1>
-          <i class="fas fa-book"></i>
-          My Courses
-        </h1>
-        <div class="user-wrapper">
-          <img src="images/student-avatar.jpg" width="40px" height="40px" alt="">
-          <div>
-            <h4>John Doe</h4>
-            <small>Computer Science - 3rd Year</small>
-          </div>
-        </div>
-      </header>
-      
-      <main>
-        <div class="courses-container">
-          <!-- AI/ML Course -->
-          <div class="course-card">
-            <div class="course-header">
-              <h3>Artificial Intelligence & Machine Learning</h3>
-              <small>CS501 - Semester 5</small>
-            </div>
-            <div class="course-body">
-              <p>Fundamentals of AI and ML algorithms with practical implementations.</p>
-              <div class="course-stats">
-                <div class="stat-item">
-                  <i class="fas fa-users"></i> 45 Students
-                </div>
-                <div class="stat-item">
-                  <i class="fas fa-tasks"></i> 8 Modules
-                </div>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-view" onclick="showCourseDetails('ai-ml')">View Course</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Web Development Course -->
-          <div class="course-card">
-            <div class="course-header" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-              <h3>Web Development</h3>
-              <small>CS502 - Semester 5</small>
-            </div>
-            <div class="course-body">
-              <p>Full-stack web development with HTML, CSS, JavaScript, and frameworks.</p>
-              <div class="course-stats">
-                <div class="stat-item">
-                  <i class="fas fa-users"></i> 52 Students
-                </div>
-                <div class="stat-item">
-                  <i class="fas fa-tasks"></i> 10 Modules
-                </div>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-view" onclick="showCourseDetails('web-dev')">View Course</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Data Structures & Algorithms -->
-          <div class="course-card">
-            <div class="course-header" style="background: linear-gradient(135deg, #5ee7df, #b490ca);">
-              <h3>Data Structures & Algorithms</h3>
-              <small>CS503 - Semester 3</small>
-            </div>
-            <div class="course-body">
-              <p>Core concepts of data structures and algorithm design and analysis.</p>
-              <div class="course-stats">
-                <div class="stat-item">
-                  <i class="fas fa-users"></i> 60 Students
-                </div>
-                <div class="stat-item">
-                  <i class="fas fa-tasks"></i> 12 Modules
-                </div>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-view" onclick="showCourseDetails('dsa')">View Course</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Internet of Things -->
-          <div class="course-card">
-            <div class="course-header" style="background: linear-gradient(135deg, #d299c2, #fef9d7);">
-              <h3>Internet of Things</h3>
-              <small>CS504 - Semester 6</small>
-            </div>
-            <div class="course-body">
-              <p>Design and implementation of IoT systems and applications.</p>
-              <div class="course-stats">
-                <div class="stat-item">
-                  <i class="fas fa-users"></i> 38 Students
-                </div>
-                <div class="stat-item">
-                  <i class="fas fa-tasks"></i> 6 Modules
-                </div>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-view" onclick="showCourseDetails('iot')">View Course</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Database Management Systems -->
-          <div class="course-card">
-            <div class="course-header" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
-              <h3>Database Management Systems</h3>
-              <small>CS505 - Semester 3</small>
-            </div>
-            <div class="course-body">
-              <p>Design and implementation of relational and NoSQL database systems.</p>
-              <div class="course-stats">
-                <div class="stat-item">
-                  <i class="fas fa-users"></i> 55 Students
-                </div>
-                <div class="stat-item">
-                  <i class="fas fa-tasks"></i> 9 Modules
-                </div>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-view" onclick="showCourseDetails('dbms')">View Course</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-
-    <!-- Course Detail Modals -->
-    <div id="ai-ml-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('ai-ml-modal')">&times;</span>
-        <div class="course-detail-header" style="background: linear-gradient(135deg, #6e8efb, #a777e3);">
-          <h2>Artificial Intelligence & Machine Learning</h2>
-          <p><strong>CS501</strong> | Semester 5 | 45 Students | Dr. Smith</p>
-        </div>
-        <div class="course-detail-body">
-          <h3>Course Description</h3>
-          <p>This course provides a comprehensive introduction to Artificial Intelligence and Machine Learning. Students will learn fundamental algorithms, neural networks, and practical applications of AI. The course covers supervised and unsupervised learning, deep learning architectures, and ethical considerations in AI development.</p>
-          
-          <div class="course-sections">
-            <div class="course-section">
-              <h3>Course Modules</h3>
-              <ul class="module-list">
-                <li>1. Introduction to AI & ML</li>
-                <li>2. Supervised Learning Algorithms</li>
-                <li>3. Unsupervised Learning Techniques</li>
-                <li>4. Neural Networks Fundamentals</li>
-                <li>5. Deep Learning Architectures</li>
-                <li>6. Natural Language Processing</li>
-                <li>7. Computer Vision</li>
-                <li>8. AI Ethics and Future Trends</li>
-              </ul>
-            </div>
-            
-            <div class="course-section">
-              <h3>Learning Outcomes</h3>
-              <ul class="module-list">
-                <li>Understand core AI/ML concepts</li>
-                <li>Implement ML algorithms in Python</li>
-                <li>Build and train neural networks</li>
-                <li>Evaluate model performance</li>
-                <li>Apply AI to real-world problems</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="web-dev-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('web-dev-modal')">&times;</span>
-        <div class="course-detail-header" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-          <h2>Web Development</h2>
-          <p><strong>CS502</strong> | Semester 5 | 52 Students | Prof. Johnson</p>
-        </div>
-        <div class="course-detail-body">
-          <h3>Course Description</h3>
-          <p>This course covers full-stack web development from fundamentals to advanced concepts. Students will learn HTML5, CSS3, JavaScript (ES6+), frontend frameworks (React), backend development (Node.js, Express), and database integration (MongoDB). The course emphasizes responsive design, RESTful APIs, and modern development workflows.</p>
-          
-          <div class="course-sections">
-            <div class="course-section">
-              <h3>Course Modules</h3>
-              <ul class="module-list">
-                <li>1. Web Fundamentals (HTML/CSS)</li>
-                <li>2. JavaScript Programming</li>
-                <li>3. Responsive Design</li>
-                <li>4. Frontend Frameworks (React)</li>
-                <li>5. Backend Development (Node.js)</li>
-                <li>6. Database Integration</li>
-                <li>7. RESTful APIs</li>
-                <li>8. Authentication & Security</li>
-                <li>9. Deployment Strategies</li>
-                <li>10. Project Development</li>
-              </ul>
-            </div>
-            
-            <div class="course-section">
-              <h3>Learning Outcomes</h3>
-              <ul class="module-list">
-                <li>Build responsive web applications</li>
-                <li>Implement frontend interfaces</li>
-                <li>Develop server-side logic</li>
-                <li>Design database schemas</li>
-                <li>Deploy full-stack applications</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="dsa-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('dsa-modal')">&times;</span>
-        <div class="course-detail-header" style="background: linear-gradient(135deg, #5ee7df, #b490ca);">
-          <h2>Data Structures & Algorithms</h2>
-          <p><strong>CS503</strong> | Semester 3 | 60 Students | Dr. Williams</p>
-        </div>
-        <div class="course-detail-body">
-          <h3>Course Description</h3>
-          <p>This course covers fundamental data structures and algorithms used in computer science. Topics include arrays, linked lists, stacks, queues, trees, graphs, sorting algorithms, searching algorithms, and complexity analysis. Students will implement these concepts in programming assignments and analyze their performance.</p>
-          
-          <div class="course-sections">
-            <div class="course-section">
-              <h3>Course Modules</h3>
-              <ul class="module-list">
-                <li>1. Introduction to Algorithms</li>
-                <li>2. Arrays and Linked Lists</li>
-                <li>3. Stacks and Queues</li>
-                <li>4. Trees and Binary Search Trees</li>
-                <li>5. Balanced Trees (AVL, Red-Black)</li>
-                <li>6. Heaps and Priority Queues</li>
-                <li>7. Hashing and Hash Tables</li>
-                <li>8. Graph Representations</li>
-                <li>9. Graph Algorithms</li>
-                <li>10. Sorting Algorithms</li>
-                <li>11. Searching Algorithms</li>
-                <li>12. Complexity Theory</li>
-              </ul>
-            </div>
-            
-            <div class="course-section">
-              <h3>Learning Outcomes</h3>
-              <ul class="module-list">
-                <li>Understand fundamental data structures</li>
-                <li>Implement common algorithms</li>
-                <li>Analyze algorithm complexity</li>
-                <li>Solve problems using appropriate data structures</li>
-                <li>Compare algorithm performance</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="iot-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('iot-modal')">&times;</span>
-        <div class="course-detail-header" style="background: linear-gradient(135deg, #d299c2, #fef9d7);">
-          <h2>Internet of Things</h2>
-          <p><strong>CS504</strong> | Semester 6 | 38 Students | Prof. Davis</p>
-        </div>
-        <div class="course-detail-body">
-          <h3>Course Description</h3>
-          <p>This course introduces the concepts and technologies behind the Internet of Things (IoT). Students will learn about sensors, actuators, microcontrollers, communication protocols, cloud integration, and data analysis for IoT systems. The course includes hands-on projects with popular IoT platforms.</p>
-          
-          <div class="course-sections">
-            <div class="course-section">
-              <h3>Course Modules</h3>
-              <ul class="module-list">
-                <li>1. Introduction to IoT</li>
-                <li>2. Sensors and Actuators</li>
-                <li>3. Microcontrollers for IoT</li>
-                <li>4. IoT Communication Protocols</li>
-                <li>5. IoT Security</li>
-                <li>6. Cloud Integration</li>
-                <li>7. IoT Data Analysis</li>
-                <li>8. IoT Applications</li>
-              </ul>
-            </div>
-            
-            <div class="course-section">
-              <h3>Learning Outcomes</h3>
-              <ul class="module-list">
-                <li>Design IoT systems</li>
-                <li>Work with sensors and microcontrollers</li>
-                <li>Implement IoT communication protocols</li>
-                <li>Integrate IoT with cloud services</li>
-                <li>Analyze IoT data</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="dbms-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('dbms-modal')">&times;</span>
-        <div class="course-detail-header" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
-          <h2>Database Management Systems</h2>
-          <p><strong>CS505</strong> | Semester 3 | 55 Students | Dr. Brown</p>
-        </div>
-        <div class="course-detail-body">
-          <h3>Course Description</h3>
-          <p>This course covers the fundamental concepts of database systems. Topics include relational database design, SQL, normalization, transactions, concurrency control, and database security. Students will work with both relational and NoSQL databases, implementing practical database applications.</p>
-          
-          <div class="course-sections">
-            <div class="course-section">
-              <h3>Course Modules</h3>
-              <ul class="module-list">
-                <li>1. Database Fundamentals</li>
-                <li>2. Relational Model</li>
-                <li>3. SQL Programming</li>
-                <li>4. Database Design</li>
-                <li>5. Normalization</li>
-                <li>6. Transactions</li>
-                <li>7. Concurrency Control</li>
-                <li>8. Database Security</li>
-                <li>9. NoSQL Databases</li>
-              </ul>
-            </div>
-            
-            <div class="course-section">
-              <h3>Learning Outcomes</h3>
-              <ul class="module-list">
-                <li>Design relational databases</li>
-                <li>Write complex SQL queries</li>
-                <li>Normalize database schemas</li>
-                <li>Understand transaction management</li>
-                <li>Work with NoSQL databases</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Function to show course details
-      function showCourseDetails(courseId) {
-        document.getElementById(courseId + '-modal').style.display = 'block';
-      }
-      
-      // Function to close modal
-      function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-      }
-      
-      // Close modal when clicking outside content
-      window.onclick = function(event) {
-        if (event.target.className === 'modal') {
-          event.target.style.display = 'none';
+        /* Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-      }
-    </script>
+        
+        .custom-alert.error {
+            background-color: #ff4444;
+        }
+        
+        .custom-alert.success {
+            background-color: #00C851;
+        }
+        
+        .custom-alert.info {
+            background-color: #33b5e5;
+        }
+        
+        .custom-alert .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 16px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
 
-    <script src="js/student.js"></script>
-  </body>
+        /* Role-specific fields container */
+        #roleSpecificFields {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        /* Input field styling */
+        .input-field select {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: none;
+            outline: none;
+            background: none;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .password-toggle:hover {
+            color: #555;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+
+                <!-- Login Form -->
+                <form action="#" class="sign-in-form" id="loginForm">
+                    <h2 class="title">Sign in</h2>
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword" style="display: none;"></i>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-users"></i>
+                        <select id="loginRole" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="hod">HOD</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    
+                    <input type="submit" value="Login" class="btn solid">
+                    <p class="social-text">Or Sign in with social platforms</p>
+                    <div class="social-media">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form action="#" class="sign-up-form" id="signupForm">
+                    <h2 class="title">Sign up</h2>
+                    
+                    <!-- Full Name -->
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="signupUsername" placeholder="Full Name" required>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupPassword" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleSignupPassword"></i>
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div class="input-field" style="position: relative;">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+                        <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                    </div>
+                    
+                    <!-- Role Selection -->
+                    <div class="input-field">
+                        <i class="fas fa-users"></i>
+                        <select id="signupRole" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="hod">HOD</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dynamic Role-Specific Fields -->
+                    <div id="roleSpecificFields"></div>
+                    
+                    <!-- Terms & Conditions Checkbox -->
+                    <div class="input-field">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <label for="agreeTerms">I agree to the terms and conditions</label>
+                    </div>
+                    
+                    <input type="submit" class="btn" value="Sign up">
+                    <p class="social-text">Or Sign up with social platforms</p>
+                    <div class="social-media">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+
+        <!-- Panels -->
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New here?</h3>
+                    <p>Create an account to access the educational portal with your specific role!</p>
+                    <button class="btn transparent" id="sign-up-btn">Sign up</button>
+                </div>
+            </div>
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>Already a user?</h3>
+                    <p>If you already have an account, just sign in. We've missed you!</p>
+                    <button class="btn transparent" id="sign-in-btn">Sign in</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const sign_in_btn = document.querySelector("#sign-in-btn");
+            const sign_up_btn = document.querySelector("#sign-up-btn");
+            const container = document.querySelector(".container");
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const roleSpecificFields = document.getElementById('roleSpecificFields');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            
+            // Toggle Sign Up/Login forms
+            sign_up_btn?.addEventListener("click", () => {
+                container.classList.add("sign-up-mode");
+                document.getElementById('signupEmail').focus();
+            });
+            
+            sign_in_btn?.addEventListener("click", () => {
+                container.classList.remove("sign-up-mode");
+                document.getElementById('loginEmail').focus();
+            });
+            
+            // Password toggle functionality
+            function setupPasswordToggle(passwordFieldId, toggleIconId) {
+                const passwordField = document.getElementById(passwordFieldId);
+                const toggleIcon = document.getElementById(toggleIconId);
+                
+                if (passwordField && toggleIcon) {
+                    toggleIcon.style.display = 'block';
+                    
+                    toggleIcon.addEventListener('click', () => {
+                        if (passwordField.type === 'password') {
+                            passwordField.type = 'text';
+                            toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+                        } else {
+                            passwordField.type = 'password';
+                            toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+                        }
+                    });
+                }
+            }
+            
+            // Initialize password toggles
+            setupPasswordToggle('loginPassword', 'toggleLoginPassword');
+            setupPasswordToggle('signupPassword', 'toggleSignupPassword');
+            setupPasswordToggle('signupConfirmPassword', 'toggleConfirmPassword');
+            
+            // Login Form Handler
+            loginForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const loginBtn = e.target.querySelector('[type="submit"]');
+                const originalBtnText = loginBtn.innerHTML;
+            
+                try {
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            
+                    const email = document.getElementById('loginEmail').value.trim();
+                    const password = document.getElementById('loginPassword').value;
+                    const role = document.getElementById('loginRole').value;
+            
+                    // Validation
+                    if (!email || !password || !role) throw new Error('Please fill in all fields');
+                    if (!validateEmail(email)) throw new Error('Please enter a valid email address');
+            
+                    // API Request
+                    const response = await fetch('http://localhost:5000/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password, role })
+                    });
+            
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message || 'Login failed');
+            
+                    // Success Handling
+                    storeAuthData(data);
+                    redirectAfterLogin(data.user.role);
+            
+                } catch (error) {
+                    showAlert('error', error.message);
+                    document.getElementById('loginPassword').value = '';
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = originalBtnText;
+                }
+            });
+            
+            // Signup Form Handler
+            signupForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const signupBtn = e.target.querySelector('[type="submit"]');
+                const originalBtnText = signupBtn.innerHTML;
+            
+                try {
+                    signupBtn.disabled = true;
+                    signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+            
+                    // Form Data
+                    const name = document.getElementById('signupUsername').value.trim();
+                    const email = document.getElementById('signupEmail').value.trim();
+                    const password = document.getElementById('signupPassword').value;
+                    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+                    const role = document.getElementById('signupRole').value;
+                    const agreeTerms = document.getElementById('agreeTerms')?.checked;  // Fixed here
+            
+                    if (!agreeTerms) {
+                        throw new Error('You must agree to the terms and conditions');
+                    }
+            
+                    // Validation
+                    validateSignupForm(name, email, password, confirmPassword, role);
+                    
+                    const signupData = { name, email, password, role };
+            
+                    // Role-specific Fields
+                    switch(role) {
+                        case 'student':
+                            signupData.rollNumber = document.getElementById('studentRollNumber')?.value.trim();
+                            signupData.department = document.getElementById('studentDepartment')?.value;
+                            signupData.semester = document.getElementById('studentSemester')?.value;
+                            
+                            if (!signupData.rollNumber || !signupData.department || !signupData.semester) {
+                                throw new Error('Please fill all student-specific fields');
+                            }
+                            break;
+                        case 'faculty':
+                        case 'hod':
+                            signupData.department = document.getElementById('facultyDepartment')?.value;
+                            if (!signupData.department) {
+                                throw new Error('Please select a department');
+                            }
+                            break;
+                    }
+            
+                    // API Request
+                    const response = await fetch('http://localhost:5000/api/auth/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(signupData)
+                    });
+            
+                    const data = await response.json();
+                    if (!response.ok || !data.success) throw new Error(data.message || 'Registration failed');
+            
+                    // Success Handling
+                    showAlert('success', 'Account created successfully! Please login.');
+                    container.classList.remove('sign-up-mode');
+                    signupForm.reset();
+                    roleSpecificFields.innerHTML = '';
+                    document.getElementById('agreeTerms').checked = false;
+            
+                } catch (error) {
+                    showAlert('error', error.message);
+                } finally {
+                    signupBtn.disabled = false;
+                    signupBtn.innerHTML = originalBtnText;
+                }
+            });
+            
+            // Dynamic Role Fields
+            document.getElementById('signupRole')?.addEventListener('change', (e) => {
+                const role = e.target.value;
+                roleSpecificFields.innerHTML = '';
+            
+                if (role === 'student') {
+                    roleSpecificFields.innerHTML = `
+                        <div class="input-field">
+                            <i class="fas fa-id-badge"></i>
+                            <input type="text" id="studentRollNumber" placeholder="Roll Number" required>
+                        </div>
+                        <div class="input-field">
+                            <i class="fas fa-building"></i>
+                            <select id="studentDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <i class="fas fa-layer-group"></i>
+                            <select id="studentSemester" required>
+                                <option value="">Select Semester</option>
+                                ${Array.from({ length: 8 }, (_, i) => `<option value="${i + 1}">Semester ${i + 1}</option>`).join('')}
+                            </select>
+                        </div>`;
+                } else if (role === 'faculty' || role === 'hod') {
+                    roleSpecificFields.innerHTML = `
+                        <div class="input-field">
+                            <i class="fas fa-building"></i>
+                            <select id="facultyDepartment" required>
+                                <option value="">Select Department</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                            </select>
+                        </div>`;
+                }
+                
+                // Set up password toggles for any new password fields
+                setupPasswordToggle('studentPassword', 'toggleStudentPassword');
+            });
+            
+            // Forgot Password Link
+            forgotPasswordLink?.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAlert('info', 'Password reset functionality coming soon!');
+            });
+            
+            // Terms Link
+            document.getElementById('termsLink')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAlert('info', 'Terms and conditions will be displayed here.');
+            });
+            
+            // Helper Functions
+            function validateEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+            
+            function validateSignupForm(name, email, password, confirmPassword, role) {
+                if (!name || !email || !password || !confirmPassword || !role) {
+                    throw new Error('Please fill in all fields');
+                }
+                if (!validateEmail(email)) throw new Error('Please enter a valid email');
+                if (password !== confirmPassword) throw new Error('Passwords do not match');
+                if (password.length < 6) throw new Error('Password must be at least 6 characters');
+            }
+            
+            function showAlert(type, message) {
+                const alert = document.createElement('div');
+                alert.classList.add('alert', type);
+                alert.innerHTML = message;
+                document.body.appendChild(alert);
+                setTimeout(() => alert.remove(), 3000);
+            }
+            
+            function storeAuthData(data) {
+                localStorage.setItem('authData', JSON.stringify(data));
+            }
+            
+            function redirectAfterLogin(role) {
+                const dashboardRoutes = {
+                    admin: 'frontend/dashboard/admin-dashboard.html',
+                    hod: 'frontend/dashboard/hod-dashboard.html',
+                    faculty: 'frontend/dashboard/faculty-dashboard.html',
+                    student: 'frontend/dashboard/student-dashboard.html'
+                };
+                window.location.href = dashboardRoutes[role] || '/';
+            }
+        });
+    </script>
+    
+</body>
 </html>

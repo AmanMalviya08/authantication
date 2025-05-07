@@ -1,7 +1,9 @@
 require("dotenv").config();
+const path = require('path'); // Add this line
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const fs = require('fs'); // File system module
 const connectDB = require("./config/db");
 const { errorHandler } = require("./middleware/error");
 
@@ -13,8 +15,9 @@ const userRoutes = require("./routes/userRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const attendanceRoutes = require('./routes/attendanceRoutes');
-const assignmentRoutes = require('./routes/assignmentRoutes'); // NEW: Assignment routes
-const markRoutes = require('./routes/markRoutes'); // NEW: Mark routes
+const assignmentRoutes = require('./routes/assignmentRoutes');
+const markRoutes = require('./routes/markRoutes');
+
 
 const app = express();
 connectDB();
@@ -83,8 +86,15 @@ app.use("/api/faculty", facultyRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/visibility-settings", visibilitySettingsRoutes);
 app.use('/api/attendance', attendanceRoutes);
-app.use('/api/assignments', assignmentRoutes); // NEW: Assignment routes
+app.use('/api/assignments', assignmentRoutes);
 app.use('/api/marks', markRoutes);
+
+// Serve static files from uploads directory
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadDir));
 
 // 404 Handler
 app.use((req, res, next) => {

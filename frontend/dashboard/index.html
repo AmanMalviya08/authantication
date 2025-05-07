@@ -142,24 +142,34 @@
                 <!-- Signup Form -->
                 <form action="#" class="sign-up-form" id="signupForm">
                     <h2 class="title">Sign up</h2>
+                    
+                    <!-- Full Name -->
                     <div class="input-field">
                         <i class="fas fa-user"></i>
                         <input type="text" id="signupUsername" placeholder="Full Name" required>
                     </div>
+                    
+                    <!-- Email -->
                     <div class="input-field">
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="signupEmail" placeholder="Email" required>
                     </div>
+                    
+                    <!-- Password -->
                     <div class="input-field" style="position: relative;">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="signupPassword" placeholder="Password" required>
                         <i class="fas fa-eye password-toggle" id="toggleSignupPassword"></i>
                     </div>
+                    
+                    <!-- Confirm Password -->
                     <div class="input-field" style="position: relative;">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
                         <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
                     </div>
+                    
+                    <!-- Role Selection -->
                     <div class="input-field">
                         <i class="fas fa-users"></i>
                         <select id="signupRole" required>
@@ -171,10 +181,14 @@
                         </select>
                     </div>
                     
-                    <!-- Container for dynamic role-specific fields -->
+                    <!-- Dynamic Role-Specific Fields -->
                     <div id="roleSpecificFields"></div>
                     
-                    
+                    <!-- Terms & Conditions Checkbox -->
+                    <div class="input-field">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <label for="agreeTerms">I agree to the terms and conditions</label>
+                    </div>
                     
                     <input type="submit" class="btn" value="Sign up">
                     <p class="social-text">Or Sign up with social platforms</p>
@@ -184,6 +198,7 @@
                         <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </form>
+                
             </div>
         </div>
 
@@ -532,7 +547,7 @@
                 document.getElementById('signupUsername').focus();
             }
         });
-
+    
         // Handle browser back/forward buttons
         window.addEventListener('popstate', () => {
             const token = localStorage.getItem('userToken');

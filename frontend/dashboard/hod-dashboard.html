@@ -736,6 +736,54 @@ function logout() {
       window.location.href = loginUrl;
     });
 }
+
+/**
+ * Logs out the user by clearing all authentication data and redirecting to login page
+ */
+ function logout() {
+  // Clear all authentication data from localStorage
+  const authItems = [
+      'token', 
+      'userToken',
+      'role',
+      'userRole',
+      'userData',
+      'refreshToken'
+  ];
+  
+  authItems.forEach(item => localStorage.removeItem(item));
+  
+  // Clear session storage
+  sessionStorage.clear();
+  
+  // Clear all cookies
+  document.cookie.split(";").forEach(cookie => {
+      const [name] = cookie.trim().split('=');
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+  
+  // Add logout indicator to URL
+  const logoutUrl = new URL('/frontend/dashboard/index.html', window.location.origin);
+  logoutUrl.searchParams.set('logout', 'true');
+  
+  // Redirect with prevention for any potential redirect loops
+  if (!window.location.href.includes('logout=true')) {
+      window.location.href = logoutUrl.toString();
+  } else {
+      // Fallback in case we're already on the logout page
+      window.location.href = '/frontend/dashboard/index.html';
+  }
+  
+  // Optional: Send logout request to server if needed
+  // fetch('/api/auth/logout', { method: 'POST' })
+  //   .catch(err => console.error('Logout API error:', err));
+}
+
+// Usage: Attach to logout button/link
+document.getElementById('logoutLink')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  logout();
+});
   </script>
   </body>
 </html>

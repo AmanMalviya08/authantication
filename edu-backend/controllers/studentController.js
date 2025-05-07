@@ -6,6 +6,7 @@ const Mark = require('../models/Mark');
 const Subject = require('../models/Subject');
 const VisibilitySetting = require('../models/VisibilitySetting');
 
+
 // @desc    Get student profile
 // @route   GET /api/student/profile
 // @access  Private/Student
@@ -51,6 +52,88 @@ const updateStudentProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get assignment details by ID
+// @route   GET /api/student/assignments/:id
+// @access  Private/Student
+const getAssignmentById = asyncHandler(async (req, res) => {
+  const assignment = await Assignment.findOne({
+    _id: req.params.id,
+    department: req.user.department,
+    semester: req.user.semester
+  })
+  .populate('subject', 'name code')
+  .populate('createdBy', 'name email');
+
+  if (!assignment) {
+    res.status(404);
+    throw new Error('Assignment not found or not available for your department/semester');
+  }
+
+  // Check if student has already submitted
+  const submission = assignment.submissions.find(
+    sub => sub.student.toString() === req.user._id.toString()
+  );
+
+  res.json({
+    ...assignment.toObject(),
+    submitted: !!submission,
+    submissionDate: submission?.submittedAt,
+    submissionStatus: submission?.status
+  });
+});
+
+// @desc    Submit assignment
+// @route   POST /api/student/assignments/:id/submit
+// @access  Private/Student
+const submitAssignment = asyncHandler(async (req, res) => {
+  const assignment = await Assignment.findOne({
+    _id: req.params.id,
+    department: req.user.department,
+    semester: req.user.semester
+  });
+
+  if (!assignment) {
+    res.status(404);
+    throw new Error('Assignment not found or not available for your department/semester');
+  }
+
+  // Check if already submitted
+  const existingSubmission = assignment.submissions.find(
+    sub => sub.student.toString() === req.user._id.toString()
+  );
+
+  if (existingSubmission) {
+    res.status(400);
+    throw new Error('You have already submitted this assignment');
+  }
+
+  // Check if file was uploaded
+  if (!req.file) {
+    res.status(400);
+    throw new Error('Please upload your assignment file');
+  }
+
+  const submission = {
+    student: req.user._id,
+    fileUrl: `/uploads/assignments/${req.file.filename}`,
+    submittedAt: new Date(),
+    status: new Date() > assignment.dueDate ? 'late' : 'submitted'
+  };
+
+  if (req.body.comments) {
+    submission.comments = req.body.comments;
+  }
+
+  assignment.submissions.push(submission);
+  await assignment.save();
+
+  res.status(201).json({
+    success: true,
+    message: 'Assignment submitted successfully',
+    submission
+  });
+});
+
 // @desc    Get student's assignments
 // @route   GET /api/student/assignments
 // @access  Private/Student
@@ -66,9 +149,21 @@ const getMyAssignments = asyncHandler(async (req, res) => {
     department: req.user.department,
     semester: req.user.semester,
   }).populate('subject', 'name code')
-    .populate('faculty', 'name');
+    .populate('createdBy', 'name');
 
-  res.json(assignments);
+  // Add submission status for each assignment
+  const assignmentsWithStatus = assignments.map(assignment => {
+    const submission = assignment.submissions.find(
+      sub => sub.student.toString() === req.user._id.toString()
+    );
+    return {
+      ...assignment.toObject(),
+      submitted: !!submission,
+      submissionStatus: submission?.status
+    };
+  });
+
+  res.json(assignmentsWithStatus);
 });
 
 // @desc    Get student's subjects
@@ -108,20 +203,7 @@ const getMyMarks = asyncHandler(async (req, res) => {
   res.json(marks);
 });
 
-// @desc    Get student's fees
-// @route   GET /api/student/fees
-// @access  Private/Student
-const getMyFees = asyncHandler(async (req, res) => {
-  const settings = await VisibilitySetting.findOne({ role: 'student' });
-  
-  if (!settings || !settings.showFees) {
-    res.status(403);
-    throw new Error('Access to fees is restricted');
-  }
 
-  const fees = await Fee.find({ student: req.user._id });
-  res.json(fees);
-});
 
 // @desc    Get student's attendance
 // @route   GET /api/student/attendance
@@ -150,9 +232,10 @@ const getMyAttendance = asyncHandler(async (req, res) => {
 module.exports = {
   getStudentProfile,
   updateStudentProfile,
+  getAssignmentById,
+  submitAssignment,
   getMyAssignments,
   getMySubjects,
   getMyMarks,
-  getMyFees,
-  getMyAttendance,
+  getMyAttendance
 };

@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="logout">
-        <a href="index.html">
+        <a href="/frontend/dashboard/index.html?logout=true" id="logoutLink">
           <i class="fas fa-sign-out-alt"></i>
           <span>Logout</span>
         </a>
@@ -94,7 +94,7 @@
               </div>
 
               <div id="bulk-actions" style="display: none; margin-top: 10px">
-                <button id="delete-selected" style="
+                <button id="bulk-delete-btn" class="btn-danger btn-sm" id="delete-selected" style="
                       background-color: #dc3545;
                       color: white;
                       padding: 6px 12px;
@@ -308,14 +308,14 @@
     <h2>Enter Marks</h2>
     <form id="markForm" class="form">
         <div class="form-group">
-            <label for="studentRollNumber">Student Roll Number</label>
+            <label for="studentSelect">Student</label>
             <select 
                 id="studentSelect" 
-                name="studentRollNumber" 
+                name="student" 
                 required
                 class="form-control">
-                <option value="" disabled selected>Select Student Roll Number</option>
-                <!-- Student options populated via JavaScript -->
+                <option value="" disabled selected>Select Student</option>
+                <!-- Student options will be populated via JavaScript -->
             </select>
         </div>
 
@@ -332,14 +332,14 @@
         </div>
 
         <div class="form-group">
-            <label for="gradedBy">Grading Faculty</label>
+            <label for="facultySelect">Grading Faculty</label>
             <select 
                 id="facultySelect" 
                 name="gradedBy" 
                 required
                 class="form-control">
                 <option value="" disabled selected>Select Grading Faculty</option>
-                <!-- Faculty options populated via JavaScript -->
+                <!-- Faculty options will be populated via JavaScript -->
             </select>
         </div>
 
@@ -350,158 +350,179 @@
 <script>
   // Helper to show alerts
   function showAlert(message, type) {
-      let alertContainer = document.getElementById('alertContainer');
-      if (!alertContainer) {
-          alertContainer = document.createElement('div');
-          alertContainer.id = 'alertContainer';
-          alertContainer.className = 'position-fixed top-0 end-0 p-3';
-          alertContainer.style.zIndex = '9999';
-          document.body.appendChild(alertContainer);
-      }
-  
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-      alertDiv.setAttribute('role', 'alert');
-      alertDiv.innerHTML = `
-          ${message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      `;
-      alertContainer.prepend(alertDiv);
-  
-      setTimeout(() => alertDiv.remove(), 5000);
+    let alertContainer = document.getElementById('alertContainer');
+    if (!alertContainer) {
+      alertContainer = document.createElement('div');
+      alertContainer.id = 'alertContainer';
+      alertContainer.className = 'position-fixed top-0 end-0 p-3';
+      alertContainer.style.zIndex = '9999';
+      document.body.appendChild(alertContainer);
+    }
+
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.setAttribute('role', 'alert');
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    alertContainer.prepend(alertDiv);
+
+    setTimeout(() => alertDiv.remove(), 5000);
   }
-  
+
   // Populate students
   async function populateStudentDropdown() {
-      try {
-          const res = await fetch('/api/auth/students');
-          const students = await res.json();
-          const studentSelect = document.getElementById('studentSelect');
-  
-          studentSelect.innerHTML = `<option value="" disabled selected>Select Student Roll Number</option>`;
-          students.forEach(student => {
-              const option = document.createElement('option');
-              option.value = student.rollNumber;
-              option.textContent = student.rollNumber;
-              studentSelect.appendChild(option);
-          });
-      } catch (error) {
-          console.error('Error loading students:', error);
-          showAlert('Error loading student data', 'danger');
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await fetch("http://localhost:5000/api/users/role/student", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const students = await res.json();
+      const studentSelect = document.getElementById('studentSelect');
+
+      studentSelect.innerHTML = `<option value="" disabled selected>Select Student Roll Number</option>`;
+
+      if (!students.data || !Array.isArray(students.data)) {
+        throw new Error("Invalid student data format");
       }
+
+      students.data.forEach(student => {
+        const option = document.createElement('option');
+        option.value = student.rollNumber;
+        option.textContent = student.rollNumber;
+        studentSelect.appendChild(option);
+      });
+
+      // Auto-fill if current user is a student
+      const currentRole = localStorage.getItem("userRole");
+      const currentUserRoll = localStorage.getItem("userRollNumber");
+      if (currentRole === "student") {
+        studentSelect.value = currentUserRoll;
+        studentSelect.disabled = true;
+      }
+
+    } catch (error) {
+      console.error('Error loading students:', error);
+      showAlert('Error loading student data', 'danger');
+    }
   }
-  
+
   // Populate faculty dropdown
   async function populateFacultyDropdown(selectElementId = 'markFormFacultySelect') {
-      const token = localStorage.getItem("userToken");
-      if (!token) {
-          alert("Please login to continue.");
-          window.location.href = "/frontend/dashboard/index.html";
-          return;
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("Please login to continue.");
+      window.location.href = "/frontend/dashboard/index.html";
+      return;
+    }
+
+    try {
+      const facultySelect = document.getElementById(selectElementId);
+      if (!facultySelect) {
+        console.error(`Faculty select element with ID '${selectElementId}' not found`);
+        return;
       }
-  
-      try {
-          const facultySelect = document.getElementById(selectElementId);
-          if (!facultySelect) {
-              console.error(`Faculty select element with ID '${selectElementId}' not found`);
-              return;
-          }
-  
-          facultySelect.innerHTML = `<option value="" disabled selected>Loading faculty data...</option>`;
-          facultySelect.disabled = true;
-  
-          const res = await fetch("http://localhost:5000/api/users/role/faculty", {
-              headers: { Authorization: `Bearer ${token}` }
-          });
-  
-          const facultyData = await res.json();
-          facultySelect.innerHTML = `<option value="" disabled selected>Select Faculty</option>`;
-  
-          if (!facultyData.data || !Array.isArray(facultyData.data)) {
-              throw new Error("Invalid faculty data format");
-          }
-  
-          facultyData.data.forEach(faculty => {
-              const option = document.createElement('option');
-              option.value = faculty._id;
-              option.textContent = `${faculty.name} (${faculty.department || 'N/A'})`;
-              facultySelect.appendChild(option);
-          });
-  
-          const currentRole = localStorage.getItem("userRole");
-          const currentUserId = localStorage.getItem("userId");
-          if (currentRole === "faculty") {
-              facultySelect.value = currentUserId;
-          }
-  
-          facultySelect.disabled = false;
-      } catch (err) {
-          console.error(`Faculty dropdown (${selectElementId}) load error:`, err);
-          showAlert('Error loading faculty data: ' + err.message, 'danger');
-          const facultySelect = document.getElementById(selectElementId);
-          if (facultySelect) {
-              facultySelect.innerHTML = `<option value="" disabled selected>Error loading faculty data</option>`;
-              facultySelect.disabled = false;
-          }
+
+      facultySelect.innerHTML = `<option value="" disabled selected>Loading faculty data...</option>`;
+      facultySelect.disabled = true;
+
+      const res = await fetch("http://localhost:5000/api/users/role/faculty", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const facultyData = await res.json();
+      facultySelect.innerHTML = `<option value="" disabled selected>Select Faculty</option>`;
+
+      if (!facultyData.data || !Array.isArray(facultyData.data)) {
+        throw new Error("Invalid faculty data format");
       }
+
+      facultyData.data.forEach(faculty => {
+        const option = document.createElement('option');
+        option.value = faculty._id;
+        option.textContent = `${faculty.name} (${faculty.department || 'N/A'})`;
+        facultySelect.appendChild(option);
+      });
+
+      // Auto-fill if current user is a faculty
+      const currentRole = localStorage.getItem("userRole");
+      const currentUserId = localStorage.getItem("userId");
+      if (currentRole === "faculty") {
+        facultySelect.value = currentUserId;
+        facultySelect.disabled = true;
+      }
+
+      facultySelect.disabled = false;
+    } catch (err) {
+      console.error(`Faculty dropdown (${selectElementId}) load error:`, err);
+      showAlert('Error loading faculty data: ' + err.message, 'danger');
+      const facultySelect = document.getElementById(selectElementId);
+      if (facultySelect) {
+        facultySelect.innerHTML = `<option value="" disabled selected>Error loading faculty data</option>`;
+        facultySelect.disabled = false;
+      }
+    }
   }
-  
+
   // Handle marks form submission
   async function handleMarkFormSubmit(e) {
-      e.preventDefault();
-  
-      const formData = {
-          student: document.getElementById('studentSelect').value.trim(),
-          marksObtained: Number(document.getElementById('marksObtained').value.trim()),
-          gradedBy: document.getElementById('markFormFacultySelect').value
-      };
-  
-      if (!formData.student || !formData.gradedBy || isNaN(formData.marksObtained)) {
-          showAlert('❌ Please fill in all fields correctly.', 'danger');
-          return;
+    e.preventDefault();
+
+    const formData = {
+      student: document.getElementById('studentSelect').value.trim(),
+      marksObtained: Number(document.getElementById('marksObtained').value.trim()),
+      gradedBy: document.getElementById('markFormFacultySelect').value
+    };
+
+    if (!formData.student || !formData.gradedBy || isNaN(formData.marksObtained)) {
+      showAlert('❌ Please fill in all fields correctly.', 'danger');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/marks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        showAlert(`✅ Mark submitted successfully!`, 'success');
+        document.getElementById('markForm').reset();
+      } else {
+        showAlert(`❌ Error: ${result.message}`, 'danger');
       }
-  
-      try {
-          const res = await fetch('http://localhost:5000/api/marks', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem("userToken")}`
-              },
-              body: JSON.stringify(formData)
-          });
-  
-          const result = await res.json();
-  
-          if (res.ok) {
-              showAlert(`✅ Mark submitted successfully!`, 'success');
-              document.getElementById('markForm').reset();
-          } else {
-              showAlert(`❌ Error: ${result.message}`, 'danger');
-          }
-      } catch (err) {
-          console.error('Submission error:', err);
-          showAlert('❌ Failed to submit marks. Please try again.', 'danger');
-      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      showAlert('❌ Failed to submit marks. Please try again.', 'danger');
+    }
   }
-  
+
   // On page load
   document.addEventListener('DOMContentLoaded', () => {
-      // Ensure unique IDs for dropdowns
-      const markFacultySelect = document.querySelector('#markForm select[name="gradedBy"]');
-      if (markFacultySelect && markFacultySelect.id !== 'markFormFacultySelect') {
-          markFacultySelect.id = 'markFormFacultySelect';
-      }
-  
-      populateStudentDropdown();
-      populateFacultyDropdown('markFormFacultySelect');
-  
-      const markForm = document.getElementById('markForm');
-      if (markForm) {
-          markForm.addEventListener('submit', handleMarkFormSubmit);
-      }
+    // Ensure unique ID for faculty select
+    const markFacultySelect = document.querySelector('#markForm select[name="gradedBy"]');
+    if (markFacultySelect && markFacultySelect.id !== 'markFormFacultySelect') {
+      markFacultySelect.id = 'markFormFacultySelect';
+    }
+
+    populateStudentDropdown();
+    populateFacultyDropdown('markFormFacultySelect');
+
+    const markForm = document.getElementById('markForm');
+    if (markForm) {
+      markForm.addEventListener('submit', handleMarkFormSubmit);
+    }
   });
-  </script>
+</script>
+
   
     
 
@@ -681,6 +702,54 @@
     const userPassword = document.getElementById("user-password");
     const userDepartment = document.getElementById("user-department");
     const userStatus = document.getElementById("user-status");
+
+    /**
+ * Logs out the user by clearing all authentication data and redirecting to login page
+ */
+function logout() {
+  // Clear all authentication data from localStorage
+  const authItems = [
+      'token', 
+      'userToken',
+      'role',
+      'userRole',
+      'userData',
+      'refreshToken'
+  ];
+  
+  authItems.forEach(item => localStorage.removeItem(item));
+  
+  // Clear session storage
+  sessionStorage.clear();
+  
+  // Clear all cookies
+  document.cookie.split(";").forEach(cookie => {
+      const [name] = cookie.trim().split('=');
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+  
+  // Add logout indicator to URL
+  const logoutUrl = new URL('/frontend/dashboard/index.html', window.location.origin);
+  logoutUrl.searchParams.set('logout', 'true');
+  
+  // Redirect with prevention for any potential redirect loops
+  if (!window.location.href.includes('logout=true')) {
+      window.location.href = logoutUrl.toString();
+  } else {
+      // Fallback in case we're already on the logout page
+      window.location.href = '/frontend/dashboard/index.html';
+  }
+  
+  // Optional: Send logout request to server if needed
+  // fetch('/api/auth/logout', { method: 'POST' })
+  //   .catch(err => console.error('Logout API error:', err));
+}
+
+// Usage: Attach to logout button/link
+document.getElementById('logoutLink')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  logout();
+}); 
 
     let currentType = "student";
     let editMode = false;
@@ -878,7 +947,7 @@
                                     <div class="action-buttons">
                                       <button class="btn-primary btn-sm btn-edit" data-id="${user._id
         }">
-                                        <i class="fas fa-edit"></i>
+                                       <i class="fas fa-edit"></i>
                                       </button>
                                   
                                     </div>
@@ -912,41 +981,7 @@
     }
 
     // Bulk Delete
-    document
-      .getElementById("delete-selected")
-      .addEventListener("click", async () => {
-        const selectedIds = Array.from(
-          document.querySelectorAll(".user-checkbox:checked")
-        ).map((cb) => cb.dataset.id);
-
-        if (!selectedIds.length) return alert("No users selected");
-        if (!confirm("Delete selected users?")) return;
-
-        try {
-          const token = localStorage.getItem("userToken");
-          const res = await fetch(
-            "http://localhost:5000/api/users/bulk-delete",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({ ids: selectedIds }),
-            }
-          );
-
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.message || "Bulk delete failed");
-
-          alert(data.message || "Users deleted");
-          displayRecentData(currentType);
-        } catch (err) {
-          alert(`Error: ${err.message}`);
-          console.error(err);
-        }
-      });
-
+   
     // Select All Handling
     function setupSelectAllCheckbox() {
       const selectAll = document.getElementById("select-all");

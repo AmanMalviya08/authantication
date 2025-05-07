@@ -1,30 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const { protect, restrictTo } = require('../middleware/auth');  // Corrected middleware import
+const { protect, restrictTo } = require('../middleware/auth');
 const { checkFeatureAccess } = require('../middleware/role');
-const {
-  getStudentProfile,
-  updateStudentProfile,
-  getMyAssignments,
-  getMySubjects,
-  getMyMarks,
-  getMyFees,
-  getMyAttendance,
-} = require('../controllers/studentController');
+const studentController = require('../controllers/studentController');
+const { assignmentSubmission } = require('../middleware/uploadMiddleware');
 
-// Middleware: Only accessible to logged-in users with student role
-router.use(protect, restrictTo('student'));  // Use restrictTo instead of role
+// Apply student restriction to all routes below
+router.use(protect, restrictTo('student'));
 
-// Profile
+// Assignment Routes
+router.get('/assignments/:id', studentController.getAssignmentById);
+router.post('/assignments/:id/submit', assignmentSubmission, studentController.submitAssignment);
+
+// Profile Routes
 router.route('/profile')
-  .get(getStudentProfile)
-  .put(updateStudentProfile);
+  .get(studentController.getStudentProfile)
+  .put(studentController.updateStudentProfile);
 
-// Academics with feature toggles
-router.get('/assignments', checkFeatureAccess('showAssignments'), getMyAssignments);
-router.get('/subjects', checkFeatureAccess('showSubjects'), getMySubjects);
-router.get('/marks', checkFeatureAccess('showMarks'), getMyMarks);
-router.get('/fees', checkFeatureAccess('showFees'), getMyFees);
-router.get('/attendance', checkFeatureAccess('showAttendance'), getMyAttendance);
+// Academic Routes
+router.get('/my-assignments', checkFeatureAccess('showAssignments'), studentController.getMyAssignments);
+router.get('/my-subjects', checkFeatureAccess('showSubjects'), studentController.getMySubjects);
+router.get('/my-marks', checkFeatureAccess('showMarks'), studentController.getMyMarks);
+router.get('/my-attendance', checkFeatureAccess('showAttendance'), studentController.getMyAttendance);
 
 module.exports = router;
